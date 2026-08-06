@@ -81,6 +81,13 @@ trees = {
     }
 
     groups = {
+      unrestricted = {
+        name        = "unrestricted"
+        path        = "unrestricted"
+        description = "Agent-writable subtree: the sandbox token scopes here, restricted stays out of its reach."
+        projects    = {}
+      }
+
       infra = {
         name        = "infra"
         path        = "infra"
