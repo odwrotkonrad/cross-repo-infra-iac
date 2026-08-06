@@ -13,6 +13,7 @@ variable "levels" {
       group                      = string
       description                = string
       allow_force_push           = bool
+      push_access_level          = optional(string, "no one")
       topics                     = set(string)
       visibility                 = string
       public_jobs                = bool

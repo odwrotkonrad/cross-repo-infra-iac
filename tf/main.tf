@@ -92,6 +92,7 @@ locals {
             group                      = g.path
             description                = p.description
             allow_force_push           = try(p.allow_force_push, false)
+            push_access_level          = try(p.push_access_level, "no one")
             topics                     = try(p.topics, [])
             visibility                 = try(p.visibility, "public")
             public_jobs                = try(g.defaults.public_jobs, false)
