@@ -21,6 +21,11 @@ cd "$ROOT/tf"
 
 TF=${TF:-terraform}
 
-$TF init -input=false
+#[why] validate needs no state: init without the GCS backend, so credential-less MR pipelines can run it
+if [[ $1 == validate ]] {
+  $TF init -input=false -backend=false
+} else {
+  $TF init -input=false
+}
 $TF "$@"
 ##[<] 🤖🤖
