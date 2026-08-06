@@ -3,7 +3,7 @@
 #   masked: hidden in job logs. protected: exposed only to protected branches/tags (main).
 #   values come from sensitive TF_VAR_* inputs; empty -> group variable created empty + unmasked (GitLab rejects masked empty), populate in the UI. once a real TF_VAR_* value is applied it is masked.
 locals {
-  restricted_group_id = module.l0.group_ids[var.restricted_group_path]
+  restricted_group_id = module.l1.group_ids[var.restricted_group_path]
 }
 
 resource "gitlab_group_variable" "ci_gitlab_token" {

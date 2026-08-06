@@ -64,9 +64,6 @@ variable "sandbox_ssh_key_comment" {
   default = "odwrotkonrad+sandbox@gmail.com"
 }
 
-variable "konradodwrot_group_id" {
-  type = number
-}
 
 variable "token_expires_at" {
   type = string

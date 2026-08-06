@@ -29,8 +29,8 @@ variable "restricted_group_path" {
   type = string
 }
 
-variable "konradodwrot_group_id" {
-  type = number
+variable "unrestricted_group_path" {
+  type = string
 }
 
 variable "token_expires_at" {
