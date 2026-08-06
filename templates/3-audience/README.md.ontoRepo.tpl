@@ -15,7 +15,7 @@ The `restricted` group and the sandbox identity it holds, as Terraform.
   sandbox SSH key, the restricted GCP SA, and the two Secrets Manager secrets the
   sandbox reads.
 
-Both share one state in the separate `konradodwrot-restricted-tfstate` GCS
+Both share one state in the separate `konradodwrot/restricted-tfstate` GCS
 bucket, isolated from git-repos at the storage boundary.
 
 ## State bucket bootstrap (one-time)
@@ -24,7 +24,7 @@ The state bucket must exist before `make init` — a bucket cannot hold the stat
 that creates it. Create it out-of-band, applied by your own identity:
 
 ```sh
-gcloud storage buckets create gs://konradodwrot-restricted-tfstate \
+gcloud storage buckets create gs://konradodwrot/restricted-tfstate \
   --project=main-493613 --location=EU --uniform-bucket-level-access
 ```
 
@@ -33,7 +33,7 @@ Lock its IAM to your identity (and the restricted CI identity if CI applies).
 ## First apply
 
 ```sh
-make init                 # binds to konradodwrot-restricted-tfstate
+make init                 # binds to konradodwrot/restricted-tfstate
 # import the UI-created group and (if pre-created) the infra project:
 terraform -chdir=tf import 'module.l0.gitlab_group.this["restricted"]' 203029
 make validate && make plan && make apply
