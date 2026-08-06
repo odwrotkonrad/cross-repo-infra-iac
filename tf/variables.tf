@@ -14,6 +14,7 @@ variable "trees" {
       path                       = string
       description                = string
       allow_force_push           = optional(bool, false)
+      push_access_level          = optional(string, "no one")
       topics                     = optional(set(string), [])
       visibility                 = optional(string, "public")
       enable_local_runner        = optional(bool, false)

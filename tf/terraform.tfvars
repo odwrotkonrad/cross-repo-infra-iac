@@ -45,6 +45,13 @@ trees = {
         visibility  = "public"
         topics      = ["resume", "markdown", "pdf", "pdf-one-pager", "file-generation"]
       }
+      homebrew_tap = {
+        name              = "homebrew-tap"
+        path              = "homebrew-tap"
+        description       = "Homebrew tap: Formula/che.rb, committed by the go-modules release pipeline via the commits API."
+        topics            = ["homebrew", "tap", "brew", "che"]
+        push_access_level = "maintainer"
+      }
       go_modules = {
         name                = "go-modules"
         path                = "go-modules"
