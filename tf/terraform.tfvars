@@ -64,12 +64,6 @@ trees = {
         visibility  = "public"
         topics      = ["notes", "collaboration", "agents"]
       }
-      workspace = {
-        name        = "workspace"
-        path        = "workspace"
-        description = "Clones the konradodwrot group into $WORKSPACE_DIR and generates a recursive per-subgroup repo index (each subgroup's direct repos with purpose, child subgroups linked) as generated AGENTS.md/CLAUDE.md."
-        topics      = ["workspace", "codegen", "documentation", "gitlab", "che"]
-      }
       resume_md_pdf = {
         name        = "resume-md-pdf"
         path        = "resume-md-pdf"
