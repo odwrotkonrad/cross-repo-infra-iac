@@ -52,12 +52,6 @@ trees = {
         topics              = ["go", "monorepo", "cli", "che"]
         pages_unique_domain = false
       }
-      sandbox = {
-        name        = "sandbox"
-        path        = "sandbox"
-        description = "Local claude session sandbox: kind cluster plus per-session pods running the published config-baked sandbox image."
-        topics      = ["sandbox", "kubernetes", "kind", "docker", "claude"]
-      }
     }
 
     groups = {
@@ -80,6 +74,12 @@ trees = {
             topics                     = ["ci", "docker", "container", "gitlab", "toolchain"]
             enable_local_runner        = true
             ci_pipeline_variables_role = "maintainer"
+          }
+          sandbox = {
+            name        = "sandbox"
+            path        = "sandbox"
+            description = "Local claude session sandbox: kind cluster plus per-session pods running the published config-baked sandbox image."
+            topics      = ["sandbox", "kubernetes", "kind", "docker", "claude"]
           }
           iac = {
             name        = "iac"
