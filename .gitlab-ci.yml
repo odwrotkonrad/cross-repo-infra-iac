@@ -10,7 +10,7 @@ stages:
   - apply
 
 variables:
-  CI_IMAGE: registry.gitlab.com/konradodwrot/unrestricted/infra/oci-images/ci-linux:latest
+  CI_IMAGE: registry.gitlab.com/konradodwrot/infra/oci-images/ci-linux:latest
   TF_IN_AUTOMATION: "true"
   GITLAB_TOKEN: $TF_GITLAB_TOKEN
   TF_VAR_github_token: $GITHUB_TOKEN
@@ -35,11 +35,11 @@ validate-pre-commit-all:
     - make repo-ci-precommit-all
     - git diff --exit-code HEAD
 
+#[why] main-only: the applier secrets are protected project variables, exposed only to protected-ref pipelines; MR pipelines run validate without credentials
 plan:
   stage: plan
   needs: []
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
     - make plan

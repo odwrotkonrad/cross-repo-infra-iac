@@ -134,17 +134,17 @@ module "gcp" {
 module "gitlab" {
   source = "./modules/gitlab"
 
-  levels                  = local.levels
-  restricted_group_path   = "${var.trees["konradodwrot"].path}/restricted"
-  unrestricted_group_path = "${var.trees["konradodwrot"].path}/unrestricted"
-  token_expires_at        = var.token_expires_at
-  ci_gitlab_token         = var.ci_gitlab_token
-  ci_github_token         = var.ci_github_token
-  user_ssh_keys           = var.user_ssh_keys
-  ssh_public_key          = module.gcp.ssh_public_key
-  local_runner_id         = var.local_runner_id
-  github_owner            = var.github_owner
-  github_token            = var.github_token
+  levels           = local.levels
+  iac_project_path = "${var.trees["konradodwrot"].path}/infra/iac"
+  token_group_path = var.trees["konradodwrot"].path
+  token_expires_at = var.token_expires_at
+  ci_gitlab_token  = var.ci_gitlab_token
+  ci_github_token  = var.ci_github_token
+  user_ssh_keys    = var.user_ssh_keys
+  ssh_public_key   = module.gcp.ssh_public_key
+  local_runner_id  = var.local_runner_id
+  github_owner     = var.github_owner
+  github_token     = var.github_token
 
   depends_on = [module.github]
 }
