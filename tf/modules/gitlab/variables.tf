@@ -25,11 +25,11 @@ variable "levels" {
   }))
 }
 
-variable "restricted_group_path" {
+variable "iac_project_path" {
   type = string
 }
 
-variable "unrestricted_group_path" {
+variable "token_group_path" {
   type = string
 }
 

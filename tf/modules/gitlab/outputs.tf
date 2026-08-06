@@ -8,10 +8,6 @@ output "group_ids" {
   )
 }
 
-output "restricted_group_id" {
-  value = local.restricted_group_id
-}
-
 output "sandbox_token" {
   value     = gitlab_group_access_token.sandbox.token
   sensitive = true

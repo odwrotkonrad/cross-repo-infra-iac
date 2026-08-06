@@ -10,7 +10,7 @@ stages:
   - apply
 
 variables:
-  CI_IMAGE: registry.gitlab.com/konradodwrot/unrestricted/infra/oci-images/ci-linux:latest
+  CI_IMAGE: registry.gitlab.com/konradodwrot/infra/oci-images/ci-linux:latest
   TF_IN_AUTOMATION: "true"
   GITLAB_TOKEN: $TF_GITLAB_TOKEN
   TF_VAR_github_token: $GITHUB_TOKEN
@@ -20,6 +20,9 @@ variables:
 
 default:
   image: $CI_IMAGE
+
+#[why] the credential decode lives only in the main-only tf jobs: the applier secrets are protected variables, absent on MR pipelines, so validate must not require them
+.tf-creds:
   before_script:
     - printf '%s' "$GOOGLE_CREDENTIALS" | base64 -d > "$GOOGLE_APPLICATION_CREDENTIALS"
     - test -s "$GOOGLE_APPLICATION_CREDENTIALS" || { echo "decoded SA key is empty — check GOOGLE_CREDENTIALS var"; exit 1; }
@@ -35,11 +38,12 @@ validate-pre-commit-all:
     - make repo-ci-precommit-all
     - git diff --exit-code HEAD
 
+#[why] main-only: the applier secrets are protected project variables, exposed only to protected-ref pipelines; MR pipelines run validate without credentials
 plan:
+  extends: .tf-creds
   stage: plan
   needs: []
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
     - make plan
@@ -49,6 +53,7 @@ plan:
     expire_in: 7 days
 
 apply:
+  extends: .tf-creds
   stage: apply
   needs:
     - plan
