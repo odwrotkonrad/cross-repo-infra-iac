@@ -2,7 +2,7 @@
 resource "google_project" "auth" {
   name            = "auth"
   project_id      = var.project_id
-  folder_id       = google_folder.sandbox.folder_id
+  folder_id       = var.sandbox_folder_id
   billing_account = var.gcp_billing_account
 }
 

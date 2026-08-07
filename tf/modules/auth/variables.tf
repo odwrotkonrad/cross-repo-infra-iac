@@ -1,5 +1,9 @@
 ##[>] 🤖🤖
-variable "gcp_org_id" {
+variable "sandbox_folder_id" {
+  type = string
+}
+
+variable "dev_folder_name" {
   type = string
 }
 
@@ -25,6 +29,10 @@ variable "ssh_key_comment" {
 }
 
 variable "op_vault" {
+  type = string
+}
+
+variable "go_modules_project_path" {
   type = string
 }
 

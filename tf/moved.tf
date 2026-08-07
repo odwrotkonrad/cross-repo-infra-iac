@@ -73,4 +73,14 @@ moved {
   from = module.gitlab.gitlab_user_sshkey.this
   to   = module.auth.module.host.gitlab_user_sshkey.this
 }
+
+moved {
+  from = module.auth.module.sandbox.google_folder.sandbox
+  to   = module.gcp.google_folder.sandbox
+}
+
+moved {
+  from = module.auth.module.sandbox.google_folder.dev
+  to   = module.gcp.google_folder.dev
+}
 ##[<] 🤖🤖

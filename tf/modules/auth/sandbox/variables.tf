@@ -1,5 +1,9 @@
 ##[>] 🤖🤖
-variable "gcp_org_id" {
+variable "sandbox_folder_id" {
+  type = string
+}
+
+variable "dev_folder_name" {
   type = string
 }
 

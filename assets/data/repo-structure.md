@@ -13,7 +13,9 @@ tf
   modules
     auth
       host
+      release-signing
       sandbox
+    gcp
     github
     gitlab
       level

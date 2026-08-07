@@ -125,16 +125,24 @@ module "github" {
   github_repos = local.github_repos
 }
 
+module "gcp" {
+  source = "./modules/gcp"
+
+  gcp_org_id = var.gcp_org_id
+}
+
 module "auth" {
   source = "./modules/auth"
 
-  gcp_org_id              = var.gcp_org_id
+  sandbox_folder_id       = module.gcp.sandbox_folder_id
+  dev_folder_name         = module.gcp.dev_folder_name
   gcp_billing_account     = var.gcp_billing_account
   sandbox_auth_project_id = var.sandbox_auth_project_id
   gitlab_group_id         = module.gitlab.group_ids[var.trees["konradodwrot"].path]
   token_expires_at        = var.token_expires_at
   ssh_key_comment         = var.sandbox_ssh_key_comment
   op_vault                = var.op_vault
+  go_modules_project_path = "${var.trees["konradodwrot"].path}/go-modules"
   user_ssh_keys           = var.user_ssh_keys
 }
 
