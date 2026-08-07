@@ -7,9 +7,4 @@ output "group_ids" {
     module.l3.group_ids,
   )
 }
-
-output "sandbox_token" {
-  value     = gitlab_group_access_token.sandbox.token
-  sensitive = true
-}
 ##[<] 🤖🤖

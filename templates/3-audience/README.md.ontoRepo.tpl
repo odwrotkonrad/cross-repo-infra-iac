@@ -39,14 +39,19 @@ terraform -chdir=tf import 'module.l0.gitlab_group.this["restricted"]' 203029
 make validate && make plan && make apply
 ```
 
-## Restricted SA key into 1Password (one-time, after apply)
+## Sandbox SA key into 1Password (terraform-managed)
 
-Terraform does not write to op. Push the SA key JSON into op once:
+`tf/modules/auth/sandbox/op.tf` writes the SA key JSON into the
+`SandboxProgrammaticAccess` vault (item `sandbox-gcp-sa`, field `sa_key`) on
+every apply, no manual `op item edit`. Prerequisites, one-time, manual:
 
-```sh
-terraform -chdir=tf output -raw restricted_sa_key \
-  | op item edit sandbox_restricted sa_key=-
-```
+- 1P vault `SandboxProgrammaticAccess`, your own write access kept.
+- A 1P service account with write access to that vault only, its token passed
+  as `TF_VAR_op_service_account_token`.
+- A billing account id for the `konradodwrot-sandbox-auth` project, passed as
+  `TF_VAR_gcp_billing_account`.
+- Applies creating the GCP folder tree/project run locally with your own
+  gcloud identity (org-level perms); the CI applier SA has none.
 
 ## CI variables (masked + protected)
 

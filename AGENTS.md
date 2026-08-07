@@ -63,13 +63,17 @@ assets
   data
   docs-agents
 ci
+spec
+  auth
 templates
   1-env
   2-data
   3-audience
 tf
   modules
-    gcp
+    auth
+      host
+      sandbox
     github
     gitlab
       level

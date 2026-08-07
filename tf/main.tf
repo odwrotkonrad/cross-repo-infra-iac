@@ -125,11 +125,17 @@ module "github" {
   github_repos = local.github_repos
 }
 
-module "gcp" {
-  source = "./modules/gcp"
+module "auth" {
+  source = "./modules/auth"
 
-  gitlab_token    = module.gitlab.sandbox_token
-  ssh_key_comment = var.sandbox_ssh_key_comment
+  gcp_org_id              = var.gcp_org_id
+  gcp_billing_account     = var.gcp_billing_account
+  sandbox_auth_project_id = var.sandbox_auth_project_id
+  gitlab_group_id         = module.gitlab.group_ids[var.trees["konradodwrot"].path]
+  token_expires_at        = var.token_expires_at
+  ssh_key_comment         = var.sandbox_ssh_key_comment
+  op_vault                = var.op_vault
+  user_ssh_keys           = var.user_ssh_keys
 }
 
 module "gitlab" {
@@ -141,8 +147,6 @@ module "gitlab" {
   token_expires_at = var.token_expires_at
   ci_gitlab_token  = var.ci_gitlab_token
   ci_github_token  = var.ci_github_token
-  user_ssh_keys    = var.user_ssh_keys
-  ssh_public_key   = module.gcp.ssh_public_key
   local_runner_id  = var.local_runner_id
   github_owner     = var.github_owner
   github_token     = var.github_token

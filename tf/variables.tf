@@ -60,6 +60,33 @@ variable "gcp_project" {
   default = "main-493613"
 }
 
+variable "gcp_org_id" {
+  type    = string
+  default = "882523005777"
+}
+
+#[why] set via TF_VAR_gcp_billing_account at plan/apply, never committed
+variable "gcp_billing_account" {
+  type      = string
+  sensitive = true
+}
+
+#[why] 1P service account scoped write to the sandbox vault only: set via TF_VAR_op_service_account_token (or OP_SERVICE_ACCOUNT_TOKEN) at plan/apply
+variable "op_service_account_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "op_vault" {
+  type    = string
+  default = "SandboxProgrammaticAccess"
+}
+
+variable "sandbox_auth_project_id" {
+  type    = string
+  default = "konradodwrot-sandbox-auth"
+}
+
 variable "sandbox_ssh_key_comment" {
   type    = string
   default = "odwrotkonrad+sandbox@gmail.com"

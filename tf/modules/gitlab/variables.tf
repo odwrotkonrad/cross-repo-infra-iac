@@ -50,18 +50,6 @@ variable "ci_github_token" {
   default   = ""
 }
 
-variable "user_ssh_keys" {
-  type = map(object({
-    key        = string
-    usage_type = optional(string, "auth")
-  }))
-  default = {}
-}
-
-variable "ssh_public_key" {
-  type = string
-}
-
 variable "local_runner_id" {
   type    = number
   default = null

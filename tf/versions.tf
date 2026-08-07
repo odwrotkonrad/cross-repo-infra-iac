@@ -19,6 +19,10 @@ terraform {
       source  = "hashicorp/tls"
       version = "~> 4.0"
     }
+    onepassword = {
+      source  = "1Password/onepassword"
+      version = "~> 2.1"
+    }
   }
 
   backend "gcs" {
