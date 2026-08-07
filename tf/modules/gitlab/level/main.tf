@@ -35,6 +35,17 @@ resource "gitlab_branch_protection" "this" {
   allow_force_push   = each.value.allow_force_push
 }
 
+#[why] every ref protected: branch pipelines all run on protected refs (protected CI vars flow), and the Developer sandbox token cannot push any branch. costs: merged branches cannot be deleted, and with github_mirror every branch mirrors (only_protected_branches matches all)
+resource "gitlab_branch_protection" "all" {
+  for_each = { for k, p in var.projects : k => p if p.protect_all_branches }
+
+  project            = gitlab_project.this[each.key].id
+  branch             = "*"
+  push_access_level  = "maintainer"
+  merge_access_level = "maintainer"
+  allow_force_push   = false
+}
+
 resource "gitlab_project_pages_settings" "this" {
   for_each = { for k, p in var.projects : k => p if p.pages_unique_domain != null }
 

@@ -89,10 +89,11 @@ trees = {
             topics      = ["sandbox", "kubernetes", "kind", "docker", "claude"]
           }
           iac = {
-            name        = "iac"
-            path        = "iac"
-            description = "The konradodwrot group tree and the sandbox identity it holds, as Terraform."
-            topics      = ["terraform", "infrastructure", "gitlab", "gcp", "iac", "secrets"]
+            name                 = "iac"
+            path                 = "iac"
+            description          = "The konradodwrot group tree and the sandbox identity it holds, as Terraform."
+            topics               = ["terraform", "infrastructure", "gitlab", "gcp", "iac", "secrets"]
+            protect_all_branches = true
           }
         }
       }

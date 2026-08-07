@@ -24,6 +24,7 @@ variable "projects" {
     enable_local_runner        = bool
     pages_unique_domain        = optional(bool)
     ci_pipeline_variables_role = optional(string)
+    protect_all_branches       = optional(bool, false)
   }))
 }
 
