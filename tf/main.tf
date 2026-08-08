@@ -129,7 +129,8 @@ module "github" {
 module "gcp" {
   source = "./modules/gcp"
 
-  gcp_org_id = var.gcp_org_id
+  gcp_org_id  = var.gcp_org_id
+  gcp_project = var.gcp_project
 }
 
 module "auth" {
