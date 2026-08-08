@@ -26,4 +26,11 @@ resource "google_organization_iam_member" "ci_iam_viewer" {
   role   = "roles/iam.securityReviewer"
   member = var.gcp_ci_member
 }
+
+#[why] CI plan refreshes the folder and project resources: browser carries get/list on the resource hierarchy, read-only
+resource "google_organization_iam_member" "ci_browser" {
+  org_id = var.gcp_org_id
+  role   = "roles/browser"
+  member = var.gcp_ci_member
+}
 ##[<] 🤖🤖
