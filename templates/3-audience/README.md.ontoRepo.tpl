@@ -52,8 +52,11 @@ every apply, no manual `op item edit`. Prerequisites, one-time, manual:
   `TF_VAR_gcp_billing_account`.
 - Applies creating the GCP folder tree/project run locally with your own
   gcloud identity (org-level perms); the CI applier SA has none.
-- Two iac project CI variables (unprotected + masked), so MR-branch `plan`
-  runs: `TF_VAR_op_service_account_token`, `TF_VAR_gcp_billing_account`.
+- `TF_VAR_op_service_account_token` and `TF_VAR_gcp_billing_account` are
+  self-managed CI variables (protected + masked, `group-vars.tf`): the first
+  apply runs locally with both exported, which lands them on the iac project
+  for every later CI plan/apply. All iac refs are protected
+  (`protect_all_branches`), so they flow to MR-branch plan jobs too.
 
 ## Apt signing key (terraform-managed)
 

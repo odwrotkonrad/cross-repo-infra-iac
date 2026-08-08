@@ -158,9 +158,12 @@ module "gitlab" {
   token_expires_at = var.token_expires_at
   ci_gitlab_token  = var.ci_gitlab_token
   ci_github_token  = var.ci_github_token
-  local_runner_id  = var.local_runner_id
-  github_owner     = var.github_owner
-  github_token     = var.github_token
+
+  ci_op_service_account_token = var.op_service_account_token
+  ci_gcp_billing_account      = var.gcp_billing_account
+  local_runner_id             = var.local_runner_id
+  github_owner                = var.github_owner
+  github_token                = var.github_token
 
   depends_on = [module.github]
 }

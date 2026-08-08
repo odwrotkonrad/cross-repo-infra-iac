@@ -31,6 +31,16 @@ variable "iac_project_path" {
   type = string
 }
 
+variable "ci_op_service_account_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "ci_gcp_billing_account" {
+  type      = string
+  sensitive = true
+}
+
 variable "token_group_path" {
   type = string
 }
