@@ -59,6 +59,11 @@ variable "gcp_project" {
   default = "main-493613"
 }
 
+variable "gcp_applier_member" {
+  type    = string
+  default = "user:odwrotkonrad@gmail.com"
+}
+
 variable "gcp_org_id" {
   type    = string
   default = "882523005777"
