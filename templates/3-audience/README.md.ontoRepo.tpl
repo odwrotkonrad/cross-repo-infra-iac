@@ -52,6 +52,13 @@ every apply, no manual `op item edit`. Prerequisites, one-time, manual:
   `TF_VAR_gcp_billing_account`.
 - Applies creating the GCP folder tree/project run locally with your own
   gcloud identity (org-level perms); the CI applier SA has none.
+- The apt signing key, generated out-of-band (`gpg --quick-gen-key`, never by
+  Terraform), stored as op item `apt-signing-gpg` in `SandboxProgrammaticAccess`:
+  one section with fields labeled exactly `private_key` (armored secret key
+  export) and `passphrase`. The passphrase must satisfy GitLab masking: at
+  least 8 chars, no spaces, base64-safe charset.
+- Two iac project CI variables (unprotected + masked), so MR-branch `plan`
+  runs: `TF_VAR_op_service_account_token`, `TF_VAR_gcp_billing_account`.
 
 ## CI variables (masked + protected)
 

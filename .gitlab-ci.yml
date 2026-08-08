@@ -38,18 +38,28 @@ validate-pre-commit-all:
     - make repo-ci-precommit-all
     - git diff --exit-code HEAD
 
+#[why] plan.tfplan embeds cleartext secrets (armored GPG key, SA key), so only the default-branch job uploads it for apply; branch plans keep log output only
 plan:
   extends: .tf-creds
   stage: plan
   needs: []
   rules:
-    - if: $CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
     - make plan
   artifacts:
     paths:
       - tf/plan.tfplan
     expire_in: 7 days
+
+plan-branch:
+  extends: .tf-creds
+  stage: plan
+  needs: []
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  script:
+    - make plan
 
 apply:
   extends: .tf-creds
