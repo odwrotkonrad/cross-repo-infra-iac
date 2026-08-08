@@ -3,12 +3,18 @@ assets
   data
   docs-agents
 ci
+spec
+  auth
 templates
   1-env
   2-data
   3-audience
 tf
   modules
+    auth
+      host
+      release-signing
+      sandbox
     gcp
     github
     gitlab

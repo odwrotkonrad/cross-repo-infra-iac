@@ -12,14 +12,36 @@ resource "gitlab_project_variable" "ci_gitlab_token" {
   protected = true
 }
 
-#[why] GOOGLE_CREDENTIALS is NOT managed here: it holds the out-of-band tf applier SA key
-#   (created via gcloud, set via glab), kept outside the state this applier applies.
+resource "gitlab_project_variable" "google_credentials" {
+  project   = var.iac_project_path
+  key       = "GOOGLE_CREDENTIALS"
+  value     = var.ci_google_credentials
+  masked    = var.ci_google_credentials != ""
+  protected = false
+}
 
 resource "gitlab_project_variable" "ci_github_token" {
   project   = var.iac_project_path
   key       = "GITHUB_TOKEN"
-  value     = var.ci_github_token
-  masked    = var.ci_github_token != ""
+  value     = var.github_token
+  masked    = var.github_token != ""
+  protected = true
+}
+
+#[why] self-managed bootstrap: first apply runs locally with these exported as TF_VAR_*, which lands them as CI variables for every later CI plan/apply. protected: all iac refs are protected (protect_all_branches), so they still flow to MR-branch plan jobs
+resource "gitlab_project_variable" "ci_op_service_account_token" {
+  project   = var.iac_project_path
+  key       = "TF_VAR_op_service_account_token"
+  value     = var.ci_op_service_account_token
+  masked    = var.ci_op_service_account_token != ""
+  protected = true
+}
+
+resource "gitlab_project_variable" "ci_gcp_billing_account" {
+  project   = var.iac_project_path
+  key       = "TF_VAR_gcp_billing_account"
+  value     = var.ci_gcp_billing_account
+  masked    = var.ci_gcp_billing_account != ""
   protected = true
 }
 ##[<] 🤖🤖

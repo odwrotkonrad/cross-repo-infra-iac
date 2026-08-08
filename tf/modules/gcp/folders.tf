@@ -1,0 +1,19 @@
+##[>] 🤖🤖
+resource "google_folder" "sandbox" {
+  display_name = "sandbox"
+  parent       = "organizations/${var.gcp_org_id}"
+
+  depends_on = [
+    google_project_service.cloudresourcemanager,
+    google_project_service.cloudbilling,
+    google_project_service.orgpolicy,
+    google_organization_iam_member.applier_folder_creator,
+    google_organization_iam_member.applier_org_policy_admin,
+  ]
+}
+
+resource "google_folder" "dev" {
+  display_name = "dev"
+  parent       = google_folder.sandbox.name
+}
+##[<] 🤖🤖

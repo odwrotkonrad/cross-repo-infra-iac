@@ -56,28 +56,61 @@ terraform -chdir=tf import 'module.l0.gitlab_group.this["restricted"]' 203029
 make validate && make plan && make apply
 ```
 
-## Restricted SA key into 1Password (one-time, after apply)
+## Sandbox SA key into 1Password (terraform-managed)
 
-Terraform does not write to op. Push the SA key JSON into op once:
+`tf/modules/auth/sandbox/op.tf` writes the SA key JSON into the
+`SandboxProgrammaticAccess` vault (item `sandbox-gcp-sa`, field `sa_key`) on
+every apply, no manual `op item edit`. Prerequisites, one-time, manual:
+
+- 1P vault `SandboxProgrammaticAccess`, your own write access kept.
+- A 1P service account with write access to that vault only, its token passed
+  as `TF_VAR_op_service_account_token`.
+- A billing account id for the `konradodwrot-sandbox-auth` project, passed as
+  `TF_VAR_gcp_billing_account`.
+- Applies creating the GCP folder tree/project run locally with your own
+  gcloud identity (org-level perms); the CI applier SA has none.
+- `TF_VAR_op_service_account_token` and `TF_VAR_gcp_billing_account` are
+  self-managed CI variables (protected + masked, `group-vars.tf`): the first
+  apply runs locally with both exported, which lands them on the iac project
+  for every later CI plan/apply. All iac refs are protected
+  (`protect_all_branches`), so they flow to MR-branch plan jobs too.
+
+## Apt signing key (terraform-managed)
+
+`tf/modules/auth/release-signing` generates the apt signing GPG key
+(`Olivr/gpg`, RSA 4096) and its passphrase (`random_password`, 32 alphanumeric
+chars, maskable by construction), writes both plus the public key into op item
+`apt-signing-gpg` in `SandboxProgrammaticAccess` as a durable record, and pipes
+them into `konradodwrot/go-modules` as protected CI variables
+(`APT_GPG_PRIVATE_KEY` file-type, `APT_GPG_PASSPHRASE` masked). The key
+resource carries `prevent_destroy`: replacing it breaks every installed apt
+client until they re-fetch `gpg.key`, so rotation must be an explicit state
+operation, never a plan side effect.
+
+## CI variables (self-managed)
+
+`tf/modules/gitlab/group-vars.tf` manages the iac project's own CI variables:
+`TF_GITLAB_TOKEN` (the CI applier's gitlab token, not the sandbox token),
+`GITHUB_TOKEN` (push-mirror token), `GOOGLE_CREDENTIALS` (base64 applier SA
+key), `TF_VAR_op_service_account_token` and `TF_VAR_gcp_billing_account`. All
+masked; values enter the (storage-isolated) restricted state.
+
+Their source inputs are required, with no empty defaults: an apply without
+them would blank the live CI variables (and `github_token` would rewrite every
+push-mirror URL without a credential). CI feeds them back to itself via
+`.gitlab-ci.yml` variable mappings (`TF_VAR_ci_gitlab_token: $TF_GITLAB_TOKEN`,
+…); local applies must export them:
 
 ```sh
-terraform -chdir=tf output -raw restricted_sa_key \
-  | op item edit sandbox_restricted sa_key=-
+export TF_VAR_github_token=…             # github PAT (mirror URLs + GITHUB_TOKEN CI variable)
+export TF_VAR_ci_gitlab_token=…          # current TF_GITLAB_TOKEN value
+export TF_VAR_ci_google_credentials=…    # current GOOGLE_CREDENTIALS value
+export TF_VAR_op_service_account_token=…
+export TF_VAR_gcp_billing_account=…
 ```
 
-## CI variables (masked + protected)
-
-`tf/ci-variables.tf` creates two masked, protected group variables on the
-`restricted` group for the CI applier: `TF_GITLAB_TOKEN` (the restricted CI's
-own gitlab token, not the sandbox token) and `GOOGLE_CREDENTIALS` (base64 SA
-key). Values come from sensitive inputs and enter the (storage-isolated)
-restricted state. Populate them one of two ways:
-
-- **TF-managed:** pass at apply — `TF_VAR_ci_gitlab_token=… TF_VAR_ci_google_credentials=… make apply`.
-- **Manual:** leave the vars empty; Terraform creates the group variables empty, then set their values in the GitLab UI (still masked + protected).
-
-Job logs are private on every restricted project (`public_jobs = false`), so
-neither variable is ever exposed to a non-member.
+Read current values as a maintainer via
+`glab variable get <KEY> -R konradodwrot/infra/iac`.
 
 ## Token isolation
 

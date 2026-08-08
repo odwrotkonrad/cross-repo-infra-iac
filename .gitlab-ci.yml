@@ -1,8 +1,8 @@
 ##[>] 🤖🤖
+#[why] branch pipelines only, no MR pipelines: every branch is a protected ref (branch_protection "*"), so protected vars flow to every pipeline and plan can run pre-merge; the MR widget shows the source branch pipeline
 workflow:
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH
 
 stages:
   - validate
@@ -15,13 +15,13 @@ variables:
   GITLAB_TOKEN: $TF_GITLAB_TOKEN
   TF_VAR_github_token: $GITHUB_TOKEN
   TF_VAR_ci_gitlab_token: $TF_GITLAB_TOKEN
-  TF_VAR_ci_github_token: $GITHUB_TOKEN
+  TF_VAR_ci_google_credentials: $GOOGLE_CREDENTIALS
   GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp-sa-key.json
 
 default:
   image: $CI_IMAGE
 
-#[why] the credential decode lives only in the main-only tf jobs: the applier secrets are protected variables, absent on MR pipelines, so validate must not require them
+#[why] the credential decode lives only in the tf jobs; with "*" branch protection every branch pipeline is a protected ref, so the protected applier vars are present
 .tf-creds:
   before_script:
     - printf '%s' "$GOOGLE_CREDENTIALS" | base64 -d > "$GOOGLE_APPLICATION_CREDENTIALS"
@@ -31,14 +31,14 @@ default:
 validate-pre-commit-all:
   stage: validate
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   variables:
     CHE_RENDER_TEMPLATES_SKIP_SECRETS: "true"
   script:
     - make repo-ci-precommit-all
     - git diff --exit-code HEAD
 
-#[why] main-only: the applier secrets are protected project variables, exposed only to protected-ref pipelines; MR pipelines run validate without credentials
+#[why] plan.tfplan embeds cleartext secrets (armored GPG key, SA key), so only the default-branch job uploads it for apply; branch plans keep log output only
 plan:
   extends: .tf-creds
   stage: plan
@@ -51,6 +51,15 @@ plan:
     paths:
       - tf/plan.tfplan
     expire_in: 7 days
+
+plan-branch:
+  extends: .tf-creds
+  stage: plan
+  needs: []
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  script:
+    - make plan
 
 apply:
   extends: .tf-creds

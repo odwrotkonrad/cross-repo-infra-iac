@@ -1,11 +1,17 @@
 ##[>] 🤖🤖
-variable "gitlab_token" {
-  type      = string
-  sensitive = true
+variable "gcp_org_id" {
+  type = string
 }
 
-#[why] trailing comment on the sandbox .pub keys (ssh-keygen comment slot); shows in ssh-add -l, agent, signed-commit key display
-variable "ssh_key_comment" {
+variable "gcp_project" {
+  type = string
+}
+
+variable "gcp_applier_member" {
+  type = string
+}
+
+variable "gcp_ci_member" {
   type = string
 }
 ##[<] 🤖🤖

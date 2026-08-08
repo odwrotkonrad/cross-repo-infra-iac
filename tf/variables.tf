@@ -52,7 +52,6 @@ variable "github_owner" {
 variable "github_token" {
   type      = string
   sensitive = true
-  default   = ""
 }
 
 variable "gcp_project" {
@@ -60,9 +59,56 @@ variable "gcp_project" {
   default = "main-493613"
 }
 
+variable "gcp_applier_member" {
+  type    = string
+  default = "user:odwrotkonrad@gmail.com"
+}
+
+variable "gcp_ci_member" {
+  type    = string
+  default = "serviceAccount:tf-restricted-infra@main-493613.iam.gserviceaccount.com"
+}
+
+variable "gcp_org_id" {
+  type    = string
+  default = "882523005777"
+}
+
+#[why] set via TF_VAR_gcp_billing_account at plan/apply, never committed
+variable "gcp_billing_account" {
+  type      = string
+  sensitive = true
+}
+
+#[why] 1P service account scoped write to the sandbox vault only: set via TF_VAR_op_service_account_token (or OP_SERVICE_ACCOUNT_TOKEN) at plan/apply
+variable "op_service_account_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "op_vault" {
+  type    = string
+  default = "SandboxProgrammaticAccess"
+}
+
+variable "sandbox_auth_project_id" {
+  type    = string
+  default = "konradodwrot-sandbox-auth"
+}
+
 variable "sandbox_ssh_key_comment" {
   type    = string
   default = "odwrotkonrad+sandbox@gmail.com"
+}
+
+variable "apt_gpg_name" {
+  type    = string
+  default = "konradodwrot apt"
+}
+
+variable "apt_gpg_email" {
+  type    = string
+  default = "odwrotkonrad+apt@gmail.com"
 }
 
 
@@ -70,17 +116,15 @@ variable "token_expires_at" {
   type = string
 }
 
-#[why] restricted CI's own gitlab token (NOT the sandbox token): set via TF_VAR_ci_gitlab_token at apply, empty -> group variable created empty, populate manually
+#[why] required, no empty default: an apply without TF_VAR_ci_gitlab_token would blank the CI variable. restricted CI's own gitlab token, NOT the sandbox token
 variable "ci_gitlab_token" {
   type      = string
   sensitive = true
-  default   = ""
 }
 
-#[why] github push-mirror token for the CI applier: set via TF_VAR_ci_github_token at apply, empty -> group variable created empty, populate manually
-variable "ci_github_token" {
+#[why] required, no empty default: an apply without TF_VAR_ci_google_credentials would blank the CI variable. base64 SA key of the CI applier
+variable "ci_google_credentials" {
   type      = string
   sensitive = true
-  default   = ""
 }
 ##[<] 🤖🤖

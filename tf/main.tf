@@ -101,6 +101,7 @@ locals {
             enable_local_runner        = try(p.enable_local_runner, false)
             pages_unique_domain        = try(p.pages_unique_domain, null)
             ci_pipeline_variables_role = try(p.ci_pipeline_variables_role, null)
+            protect_all_branches       = try(p.protect_all_branches, false)
           }
         }
       ]...)
@@ -128,8 +129,28 @@ module "github" {
 module "gcp" {
   source = "./modules/gcp"
 
-  gitlab_token    = module.gitlab.sandbox_token
-  ssh_key_comment = var.sandbox_ssh_key_comment
+  gcp_org_id         = var.gcp_org_id
+  gcp_project        = var.gcp_project
+  gcp_applier_member = var.gcp_applier_member
+  gcp_ci_member      = var.gcp_ci_member
+}
+
+module "auth" {
+  source = "./modules/auth"
+
+  sandbox_folder_id       = module.gcp.sandbox_folder_id
+  dev_folder_name         = module.gcp.dev_folder_name
+  gcp_billing_account     = var.gcp_billing_account
+  sandbox_auth_project_id = var.sandbox_auth_project_id
+  gitlab_group_id         = module.gitlab.group_ids[var.trees["konradodwrot"].path]
+  token_expires_at        = var.token_expires_at
+  ssh_key_comment         = var.sandbox_ssh_key_comment
+  op_vault                = var.op_vault
+  ci_member               = var.gcp_ci_member
+  go_modules_project_path = "${var.trees["konradodwrot"].path}/go-modules"
+  apt_gpg_name            = var.apt_gpg_name
+  apt_gpg_email           = var.apt_gpg_email
+  user_ssh_keys           = var.user_ssh_keys
 }
 
 module "gitlab" {
@@ -140,12 +161,13 @@ module "gitlab" {
   token_group_path = var.trees["konradodwrot"].path
   token_expires_at = var.token_expires_at
   ci_gitlab_token  = var.ci_gitlab_token
-  ci_github_token  = var.ci_github_token
-  user_ssh_keys    = var.user_ssh_keys
-  ssh_public_key   = module.gcp.ssh_public_key
-  local_runner_id  = var.local_runner_id
-  github_owner     = var.github_owner
-  github_token     = var.github_token
+
+  ci_op_service_account_token = var.op_service_account_token
+  ci_gcp_billing_account      = var.gcp_billing_account
+  ci_google_credentials       = var.ci_google_credentials
+  local_runner_id             = var.local_runner_id
+  github_owner                = var.github_owner
+  github_token                = var.github_token
 
   depends_on = [module.github]
 }

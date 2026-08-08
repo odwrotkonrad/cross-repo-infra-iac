@@ -9,4 +9,8 @@ provider "github" {
 provider "google" {
   project = var.gcp_project
 }
+
+provider "onepassword" {
+  service_account_token = var.op_service_account_token
+}
 ##[<] 🤖🤖

@@ -1,36 +1,34 @@
 ##[>] 🤖🤖
-#[why] base64 JSON key: `terraform output -raw restricted_sa_key | base64 -d | op item edit ...` (Part 3), one-time, run by you
-output "restricted_sa_key" {
-  value     = module.gcp.sa_key
-  sensitive = true
+output "sandbox_auth_project_id" {
+  value = module.auth.project_id
 }
 
-output "restricted_sa_email" {
-  value = module.gcp.sa_email
+output "sandbox_sa_email" {
+  value = module.auth.sa_email
 }
 
 output "gitlab_token_secret" {
-  value = module.gcp.gitlab_token_secret
+  value = module.auth.gitlab_token_secret
 }
 
 output "ssh_private_key_secret" {
-  value = module.gcp.ssh_private_key_secret
+  value = module.auth.ssh_private_key_secret
 }
 
 output "ssh_signing_key_secret" {
-  value = module.gcp.ssh_signing_key_secret
+  value = module.auth.ssh_signing_key_secret
 }
 
 output "ssh_access_key_pub_secret" {
-  value = module.gcp.ssh_access_key_pub_secret
+  value = module.auth.ssh_access_key_pub_secret
 }
 
 output "ssh_signing_key_pub_secret" {
-  value = module.gcp.ssh_signing_key_pub_secret
+  value = module.auth.ssh_signing_key_pub_secret
 }
 
 #[why] one-time manual: `terraform output -raw ssh_signing_public_key` -> POST /user/keys usage_type=signing (provider has no signing usage_type)
 output "ssh_signing_public_key" {
-  value = module.gcp.ssh_signing_public_key
+  value = module.auth.ssh_signing_public_key
 }
 ##[<] 🤖🤖

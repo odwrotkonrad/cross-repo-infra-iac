@@ -22,12 +22,28 @@ variable "levels" {
       enable_local_runner        = bool
       pages_unique_domain        = optional(bool)
       ci_pipeline_variables_role = optional(string)
+      protect_all_branches       = optional(bool, false)
     }))
   }))
 }
 
 variable "iac_project_path" {
   type = string
+}
+
+variable "ci_op_service_account_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "ci_gcp_billing_account" {
+  type      = string
+  sensitive = true
+}
+
+variable "ci_google_credentials" {
+  type      = string
+  sensitive = true
 }
 
 variable "token_group_path" {
@@ -42,24 +58,6 @@ variable "ci_gitlab_token" {
   type      = string
   sensitive = true
   default   = ""
-}
-
-variable "ci_github_token" {
-  type      = string
-  sensitive = true
-  default   = ""
-}
-
-variable "user_ssh_keys" {
-  type = map(object({
-    key        = string
-    usage_type = optional(string, "auth")
-  }))
-  default = {}
-}
-
-variable "ssh_public_key" {
-  type = string
 }
 
 variable "local_runner_id" {

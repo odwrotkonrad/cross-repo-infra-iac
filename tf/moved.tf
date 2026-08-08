@@ -50,42 +50,37 @@ moved {
 }
 
 moved {
-  from = google_service_account.restricted
-  to   = module.gcp.google_service_account.restricted
+  from = module.gcp.tls_private_key.sandbox
+  to   = module.auth.module.sandbox.tls_private_key.sandbox
 }
 
 moved {
-  from = google_service_account_key.restricted
-  to   = module.gcp.google_service_account_key.restricted
+  from = module.gcp.tls_private_key.sandbox_signing
+  to   = module.auth.module.sandbox.tls_private_key.sandbox_signing
 }
 
 moved {
-  from = google_secret_manager_secret.gitlab_token
-  to   = module.gcp.google_secret_manager_secret.gitlab_token
+  from = module.gitlab.gitlab_group_access_token.sandbox
+  to   = module.auth.module.sandbox.gitlab_group_access_token.sandbox
 }
 
 moved {
-  from = google_secret_manager_secret_version.gitlab_token
-  to   = module.gcp.google_secret_manager_secret_version.gitlab_token
+  from = module.gitlab.gitlab_user_sshkey.sandbox
+  to   = module.auth.module.sandbox.gitlab_user_sshkey.sandbox
 }
 
 moved {
-  from = google_secret_manager_secret_iam_member.gitlab_token_reader
-  to   = module.gcp.google_secret_manager_secret_iam_member.gitlab_token_reader
+  from = module.gitlab.gitlab_user_sshkey.this
+  to   = module.auth.module.host.gitlab_user_sshkey.this
 }
 
 moved {
-  from = google_secret_manager_secret.ssh_private_key
-  to   = module.gcp.google_secret_manager_secret.ssh_private_key
+  from = module.auth.module.sandbox.google_folder.sandbox
+  to   = module.gcp.google_folder.sandbox
 }
 
 moved {
-  from = google_secret_manager_secret_version.ssh_private_key
-  to   = module.gcp.google_secret_manager_secret_version.ssh_private_key
-}
-
-moved {
-  from = google_secret_manager_secret_iam_member.ssh_private_key_reader
-  to   = module.gcp.google_secret_manager_secret_iam_member.ssh_private_key_reader
+  from = module.auth.module.sandbox.google_folder.dev
+  to   = module.gcp.google_folder.dev
 }
 ##[<] 🤖🤖
