@@ -11,4 +11,10 @@ resource "google_project_service" "cloudbilling" {
   service            = "cloudbilling.googleapis.com"
   disable_on_destroy = false
 }
+
+resource "google_project_service" "orgpolicy" {
+  project            = var.gcp_project
+  service            = "orgpolicy.googleapis.com"
+  disable_on_destroy = false
+}
 ##[<] 🤖🤖
