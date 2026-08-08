@@ -19,4 +19,11 @@ resource "google_project_iam_member" "ci_service_usage_viewer" {
   role    = "roles/serviceusage.serviceUsageViewer"
   member  = var.gcp_ci_member
 }
+
+#[why] CI plan refreshes the org and project IAM member grants above: securityReviewer carries getIamPolicy on every resource below the org, read-only
+resource "google_organization_iam_member" "ci_iam_viewer" {
+  org_id = var.gcp_org_id
+  role   = "roles/iam.securityReviewer"
+  member = var.gcp_ci_member
+}
 ##[<] 🤖🤖
