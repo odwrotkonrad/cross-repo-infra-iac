@@ -23,8 +23,8 @@ resource "gitlab_project_variable" "google_credentials" {
 resource "gitlab_project_variable" "ci_github_token" {
   project   = var.iac_project_path
   key       = "GITHUB_TOKEN"
-  value     = var.ci_github_token
-  masked    = var.ci_github_token != ""
+  value     = var.github_token
+  masked    = var.github_token != ""
   protected = true
 }
 

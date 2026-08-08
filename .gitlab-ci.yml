@@ -15,7 +15,6 @@ variables:
   GITLAB_TOKEN: $TF_GITLAB_TOKEN
   TF_VAR_github_token: $GITHUB_TOKEN
   TF_VAR_ci_gitlab_token: $TF_GITLAB_TOKEN
-  TF_VAR_ci_github_token: $GITHUB_TOKEN
   TF_VAR_ci_google_credentials: $GOOGLE_CREDENTIALS
   GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp-sa-key.json
 

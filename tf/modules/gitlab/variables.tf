@@ -60,12 +60,6 @@ variable "ci_gitlab_token" {
   default   = ""
 }
 
-variable "ci_github_token" {
-  type      = string
-  sensitive = true
-  default   = ""
-}
-
 variable "local_runner_id" {
   type    = number
   default = null

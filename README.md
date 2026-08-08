@@ -102,9 +102,8 @@ push-mirror URL without a credential). CI feeds them back to itself via
 …); local applies must export them:
 
 ```sh
-export TF_VAR_github_token=…             # github PAT (mirror URLs)
+export TF_VAR_github_token=…             # github PAT (mirror URLs + GITHUB_TOKEN CI variable)
 export TF_VAR_ci_gitlab_token=…          # current TF_GITLAB_TOKEN value
-export TF_VAR_ci_github_token=…          # current GITHUB_TOKEN value
 export TF_VAR_ci_google_credentials=…    # current GOOGLE_CREDENTIALS value
 export TF_VAR_op_service_account_token=…
 export TF_VAR_gcp_billing_account=…

@@ -112,12 +112,6 @@ variable "ci_gitlab_token" {
   sensitive = true
 }
 
-#[why] required, no empty default: an apply without TF_VAR_ci_github_token would blank the CI variable
-variable "ci_github_token" {
-  type      = string
-  sensitive = true
-}
-
 #[why] required, no empty default: an apply without TF_VAR_ci_google_credentials would blank the CI variable. base64 SA key of the CI applier
 variable "ci_google_credentials" {
   type      = string

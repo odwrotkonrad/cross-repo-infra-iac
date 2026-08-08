@@ -157,7 +157,6 @@ module "gitlab" {
   token_group_path = var.trees["konradodwrot"].path
   token_expires_at = var.token_expires_at
   ci_gitlab_token  = var.ci_gitlab_token
-  ci_github_token  = var.ci_github_token
 
   ci_op_service_account_token = var.op_service_account_token
   ci_gcp_billing_account      = var.gcp_billing_account
