@@ -17,6 +17,8 @@ module "release_signing" {
 
   op_vault                = var.op_vault
   go_modules_project_path = var.go_modules_project_path
+  gpg_name                = var.apt_gpg_name
+  gpg_email               = var.apt_gpg_email
 }
 
 module "host" {

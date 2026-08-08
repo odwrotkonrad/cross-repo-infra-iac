@@ -3,16 +3,50 @@ data "onepassword_vault" "this" {
   name = var.op_vault
 }
 
-#[why] key generated out-of-band once (gpg --quick-gen-key), stored in op item "apt-signing-gpg" fields private_key (armored) + passphrase; terraform only pipes it into CI, never generates it
-data "onepassword_item" "apt_signing" {
-  vault = data.onepassword_vault.this.uuid
-  title = "apt-signing-gpg"
+#[why] alphanumeric-only and 32 chars: satisfies GitLab masking (>=8 chars, no spaces, base64-safe charset) by construction
+resource "random_password" "passphrase" {
+  length  = 32
+  special = false
 }
 
-locals {
-  apt_signing = {
-    for f in flatten([for s in data.onepassword_item.apt_signing.section : s.field]) :
-    f.label => f.value
+#[why] prevent_destroy: replacing the key re-signs the apt repo under a new identity and breaks every installed client until they re-fetch gpg.key; rotation must be an explicit, deliberate state operation
+resource "gpg_private_key" "apt_signing" {
+  name       = var.gpg_name
+  email      = var.gpg_email
+  passphrase = random_password.passphrase.result
+  rsa_bits   = 4096
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+#[why] durable record in the vault for humans and non-CI consumers; the CI variables below read the terraform resources directly
+resource "onepassword_item" "apt_signing" {
+  vault    = data.onepassword_vault.this.uuid
+  title    = "apt-signing-gpg"
+  category = "secure_note"
+
+  section {
+    label = "keys"
+
+    field {
+      label = "private_key"
+      type  = "CONCEALED"
+      value = gpg_private_key.apt_signing.private_key
+    }
+
+    field {
+      label = "passphrase"
+      type  = "CONCEALED"
+      value = random_password.passphrase.result
+    }
+
+    field {
+      label = "public_key"
+      type  = "STRING"
+      value = gpg_private_key.apt_signing.public_key
+    }
   }
 }
 
@@ -20,7 +54,7 @@ locals {
 resource "gitlab_project_variable" "apt_gpg_private_key" {
   project       = var.go_modules_project_path
   key           = "APT_GPG_PRIVATE_KEY"
-  value         = local.apt_signing["private_key"]
+  value         = gpg_private_key.apt_signing.private_key
   variable_type = "file"
   protected     = true
   raw           = true
@@ -29,8 +63,8 @@ resource "gitlab_project_variable" "apt_gpg_private_key" {
 resource "gitlab_project_variable" "apt_gpg_passphrase" {
   project   = var.go_modules_project_path
   key       = "APT_GPG_PASSPHRASE"
-  value     = local.apt_signing["passphrase"]
-  masked    = local.apt_signing["passphrase"] != ""
+  value     = random_password.passphrase.result
+  masked    = true
   protected = true
   raw       = true
 }

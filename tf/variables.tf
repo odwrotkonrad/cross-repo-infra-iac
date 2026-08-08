@@ -92,6 +92,16 @@ variable "sandbox_ssh_key_comment" {
   default = "odwrotkonrad+sandbox@gmail.com"
 }
 
+variable "apt_gpg_name" {
+  type    = string
+  default = "konradodwrot apt"
+}
+
+variable "apt_gpg_email" {
+  type    = string
+  default = "odwrotkonrad+apt@gmail.com"
+}
+
 
 variable "token_expires_at" {
   type = string

@@ -36,6 +36,14 @@ variable "go_modules_project_path" {
   type = string
 }
 
+variable "apt_gpg_name" {
+  type = string
+}
+
+variable "apt_gpg_email" {
+  type = string
+}
+
 variable "user_ssh_keys" {
   type = map(object({
     key        = string

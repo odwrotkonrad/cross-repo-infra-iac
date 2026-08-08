@@ -69,13 +69,20 @@ every apply, no manual `op item edit`. Prerequisites, one-time, manual:
   `TF_VAR_gcp_billing_account`.
 - Applies creating the GCP folder tree/project run locally with your own
   gcloud identity (org-level perms); the CI applier SA has none.
-- The apt signing key, generated out-of-band (`gpg --quick-gen-key`, never by
-  Terraform), stored as op item `apt-signing-gpg` in `SandboxProgrammaticAccess`:
-  one section with fields labeled exactly `private_key` (armored secret key
-  export) and `passphrase`. The passphrase must satisfy GitLab masking: at
-  least 8 chars, no spaces, base64-safe charset.
 - Two iac project CI variables (unprotected + masked), so MR-branch `plan`
   runs: `TF_VAR_op_service_account_token`, `TF_VAR_gcp_billing_account`.
+
+## Apt signing key (terraform-managed)
+
+`tf/modules/auth/release-signing` generates the apt signing GPG key
+(`Olivr/gpg`, RSA 4096) and its passphrase (`random_password`, 32 alphanumeric
+chars, maskable by construction), writes both plus the public key into op item
+`apt-signing-gpg` in `SandboxProgrammaticAccess` as a durable record, and pipes
+them into `konradodwrot/go-modules` as protected CI variables
+(`APT_GPG_PRIVATE_KEY` file-type, `APT_GPG_PASSPHRASE` masked). The key
+resource carries `prevent_destroy`: replacing it breaks every installed apt
+client until they re-fetch `gpg.key`, so rotation must be an explicit state
+operation, never a plan side effect.
 
 ## CI variables (masked + protected)
 

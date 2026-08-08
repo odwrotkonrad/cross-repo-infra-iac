@@ -144,6 +144,8 @@ module "auth" {
   ssh_key_comment         = var.sandbox_ssh_key_comment
   op_vault                = var.op_vault
   go_modules_project_path = "${var.trees["konradodwrot"].path}/go-modules"
+  apt_gpg_name            = var.apt_gpg_name
+  apt_gpg_email           = var.apt_gpg_email
   user_ssh_keys           = var.user_ssh_keys
 }
 
