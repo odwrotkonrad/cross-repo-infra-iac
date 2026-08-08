@@ -19,6 +19,12 @@ The `restricted` group and the sandbox identity it holds, as Terraform.
 Each convention dir carries a runnable `example/`. This repo itself follows all of these conventions.
 
 
+## Specs Before Implementation
+
+Functionality added / modified / removed → edit `spec/` scenarios FIRST, then
+implement, then set each touched `Status:`. New: `Status: todo`. Removed:
+delete the scenario, same change. Never implement unspecced.
+
 @assets/data/makefile.agents.md
 
 ## Directory Tree
