@@ -8,4 +8,9 @@ import {
   to = module.gitlab.gitlab_project_variable.ci_github_token
   id = "konradodwrot/infra/iac:GITHUB_TOKEN:*"
 }
+
+import {
+  to = module.gitlab.gitlab_project_variable.google_credentials
+  id = "konradodwrot/infra/iac:GOOGLE_CREDENTIALS:*"
+}
 ##[<] 🤖🤖

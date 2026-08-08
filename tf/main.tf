@@ -161,6 +161,7 @@ module "gitlab" {
 
   ci_op_service_account_token = var.op_service_account_token
   ci_gcp_billing_account      = var.gcp_billing_account
+  ci_google_credentials       = var.ci_google_credentials
   local_runner_id             = var.local_runner_id
   github_owner                = var.github_owner
   github_token                = var.github_token

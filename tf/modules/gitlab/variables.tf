@@ -41,6 +41,11 @@ variable "ci_gcp_billing_account" {
   sensitive = true
 }
 
+variable "ci_google_credentials" {
+  type      = string
+  sensitive = true
+}
+
 variable "token_group_path" {
   type = string
 }

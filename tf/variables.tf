@@ -52,7 +52,6 @@ variable "github_owner" {
 variable "github_token" {
   type      = string
   sensitive = true
-  default   = ""
 }
 
 variable "gcp_project" {
@@ -107,17 +106,21 @@ variable "token_expires_at" {
   type = string
 }
 
-#[why] restricted CI's own gitlab token (NOT the sandbox token): set via TF_VAR_ci_gitlab_token at apply, empty -> group variable created empty, populate manually
+#[why] required, no empty default: an apply without TF_VAR_ci_gitlab_token would blank the CI variable. restricted CI's own gitlab token, NOT the sandbox token
 variable "ci_gitlab_token" {
   type      = string
   sensitive = true
-  default   = ""
 }
 
-#[why] github push-mirror token for the CI applier: set via TF_VAR_ci_github_token at apply, empty -> group variable created empty, populate manually
+#[why] required, no empty default: an apply without TF_VAR_ci_github_token would blank the CI variable
 variable "ci_github_token" {
   type      = string
   sensitive = true
-  default   = ""
+}
+
+#[why] required, no empty default: an apply without TF_VAR_ci_google_credentials would blank the CI variable. base64 SA key of the CI applier
+variable "ci_google_credentials" {
+  type      = string
+  sensitive = true
 }
 ##[<] 🤖🤖

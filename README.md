@@ -87,19 +87,31 @@ resource carries `prevent_destroy`: replacing it breaks every installed apt
 client until they re-fetch `gpg.key`, so rotation must be an explicit state
 operation, never a plan side effect.
 
-## CI variables (masked + protected)
+## CI variables (self-managed)
 
-`tf/ci-variables.tf` creates two masked, protected group variables on the
-`restricted` group for the CI applier: `TF_GITLAB_TOKEN` (the restricted CI's
-own gitlab token, not the sandbox token) and `GOOGLE_CREDENTIALS` (base64 SA
-key). Values come from sensitive inputs and enter the (storage-isolated)
-restricted state. Populate them one of two ways:
+`tf/modules/gitlab/group-vars.tf` manages the iac project's own CI variables:
+`TF_GITLAB_TOKEN` (the CI applier's gitlab token, not the sandbox token),
+`GITHUB_TOKEN` (push-mirror token), `GOOGLE_CREDENTIALS` (base64 applier SA
+key), `TF_VAR_op_service_account_token` and `TF_VAR_gcp_billing_account`. All
+masked; values enter the (storage-isolated) restricted state.
 
-- **TF-managed:** pass at apply — `TF_VAR_ci_gitlab_token=… TF_VAR_ci_google_credentials=… make apply`.
-- **Manual:** leave the vars empty; Terraform creates the group variables empty, then set their values in the GitLab UI (still masked + protected).
+Their source inputs are required, with no empty defaults: an apply without
+them would blank the live CI variables (and `github_token` would rewrite every
+push-mirror URL without a credential). CI feeds them back to itself via
+`.gitlab-ci.yml` variable mappings (`TF_VAR_ci_gitlab_token: $TF_GITLAB_TOKEN`,
+…); local applies must export them:
 
-Job logs are private on every restricted project (`public_jobs = false`), so
-neither variable is ever exposed to a non-member.
+```sh
+export TF_VAR_github_token=…             # github PAT (mirror URLs)
+export TF_VAR_ci_gitlab_token=…          # current TF_GITLAB_TOKEN value
+export TF_VAR_ci_github_token=…          # current GITHUB_TOKEN value
+export TF_VAR_ci_google_credentials=…    # current GOOGLE_CREDENTIALS value
+export TF_VAR_op_service_account_token=…
+export TF_VAR_gcp_billing_account=…
+```
+
+Read current values as a maintainer via
+`glab variable get <KEY> -R konradodwrot/infra/iac`.
 
 ## Token isolation
 
