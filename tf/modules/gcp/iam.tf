@@ -12,4 +12,11 @@ resource "google_organization_iam_member" "applier_org_policy_admin" {
   role   = "roles/orgpolicy.policyAdmin"
   member = var.gcp_applier_member
 }
+
+#[why] CI plan refreshes the google_project_service resources: the CI SA needs services.list on the quota project
+resource "google_project_iam_member" "ci_service_usage_viewer" {
+  project = var.gcp_project
+  role    = "roles/serviceusage.serviceUsageViewer"
+  member  = var.gcp_ci_member
+}
 ##[<] 🤖🤖

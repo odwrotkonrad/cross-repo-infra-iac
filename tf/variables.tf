@@ -64,6 +64,11 @@ variable "gcp_applier_member" {
   default = "user:odwrotkonrad@gmail.com"
 }
 
+variable "gcp_ci_member" {
+  type    = string
+  default = "serviceAccount:tf-restricted-infra@main-493613.iam.gserviceaccount.com"
+}
+
 variable "gcp_org_id" {
   type    = string
   default = "882523005777"

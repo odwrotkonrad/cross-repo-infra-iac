@@ -10,4 +10,8 @@ variable "gcp_project" {
 variable "gcp_applier_member" {
   type = string
 }
+
+variable "gcp_ci_member" {
+  type = string
+}
 ##[<] 🤖🤖
