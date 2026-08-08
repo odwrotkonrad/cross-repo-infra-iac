@@ -33,4 +33,18 @@ resource "google_organization_iam_member" "ci_browser" {
   role   = "roles/browser"
   member = var.gcp_ci_member
 }
+
+#[why] CI plan refreshes the project-level org policy override on the sandbox auth project
+resource "google_organization_iam_member" "ci_org_policy_viewer" {
+  org_id = var.gcp_org_id
+  role   = "roles/orgpolicy.policyViewer"
+  member = var.gcp_ci_member
+}
+
+#[why] the quota project is org-less (no parent), org grants never reach it: the IAM policy read needs a direct project grant
+resource "google_project_iam_member" "ci_iam_viewer_quota_project" {
+  project = var.gcp_project
+  role    = "roles/iam.securityReviewer"
+  member  = var.gcp_ci_member
+}
 ##[<] 🤖🤖

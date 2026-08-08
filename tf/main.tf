@@ -146,6 +146,7 @@ module "auth" {
   token_expires_at        = var.token_expires_at
   ssh_key_comment         = var.sandbox_ssh_key_comment
   op_vault                = var.op_vault
+  ci_member               = var.gcp_ci_member
   go_modules_project_path = "${var.trees["konradodwrot"].path}/go-modules"
   apt_gpg_name            = var.apt_gpg_name
   apt_gpg_email           = var.apt_gpg_email

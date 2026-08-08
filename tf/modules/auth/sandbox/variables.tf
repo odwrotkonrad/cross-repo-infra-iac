@@ -32,4 +32,8 @@ variable "ssh_key_comment" {
 variable "op_vault" {
   type = string
 }
+
+variable "ci_member" {
+  type = string
+}
 ##[<] 🤖🤖

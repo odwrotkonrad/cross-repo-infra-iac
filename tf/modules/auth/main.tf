@@ -10,6 +10,7 @@ module "sandbox" {
   token_expires_at    = var.token_expires_at
   ssh_key_comment     = var.ssh_key_comment
   op_vault            = var.op_vault
+  ci_member           = var.ci_member
 }
 
 module "release_signing" {

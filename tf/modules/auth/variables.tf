@@ -36,6 +36,10 @@ variable "go_modules_project_path" {
   type = string
 }
 
+variable "ci_member" {
+  type = string
+}
+
 variable "apt_gpg_name" {
   type = string
 }
