@@ -1,1 +1,6 @@
 GITLAB_TOKEN={{ secret "op://ProgrammaticAccess/gitlab/access_token" }}
+TF_VAR_github_token=FILL_github_pat_for_mirrors_and_GITHUB_TOKEN_ci_var
+TF_VAR_ci_gitlab_token=FILL_current_TF_GITLAB_TOKEN_ci_var_value
+TF_VAR_ci_google_credentials=FILL_current_GOOGLE_CREDENTIALS_ci_var_value_base64
+TF_VAR_op_service_account_token=FILL_1password_service_account_token
+TF_VAR_gcp_billing_account=FILL_gcp_billing_account_id
