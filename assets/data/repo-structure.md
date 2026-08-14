@@ -4,7 +4,8 @@ assets
   docs-agents
 ci
 spec
-  auth
+  unvetted_ai
+    auth
 templates
   1-env
   2-data
