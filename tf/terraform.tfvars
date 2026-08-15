@@ -25,16 +25,18 @@ trees = {
         topics      = ["conventions", "documentation", "standards"]
       }
       prose = {
-        name        = "prose"
-        path        = "prose"
-        description = "Centralized prose: conventions, purpose docs, README sources, specs, shared doc templates."
-        topics      = ["prose", "documentation", "conventions", "specs", "templates"]
+        name              = "prose"
+        path              = "prose"
+        description       = "Centralized prose: conventions, purpose docs, README sources, specs, shared doc templates."
+        topics            = ["prose", "documentation", "conventions", "specs", "templates"]
+        push_access_level = "maintainer"
       }
       control = {
-        name        = "control"
-        path        = "control"
-        description = "Cross-repo automation: prose propagation, dependency graph, regen MRs, local sync."
-        topics      = ["automation", "ci", "dependency-graph", "gitlab"]
+        name              = "control"
+        path              = "control"
+        description       = "Cross-repo automation: prose propagation, dependency graph, regen MRs, local sync."
+        topics            = ["automation", "ci", "dependency-graph", "gitlab"]
+        push_access_level = "maintainer"
       }
       configs = {
         name             = "configs"
