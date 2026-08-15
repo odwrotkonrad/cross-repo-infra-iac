@@ -18,12 +18,6 @@ trees = {
     }
 
     projects = {
-      conventions = {
-        name        = "conventions"
-        path        = "conventions"
-        description = "Canonical repo conventions: purpose docs, commenting, Makefile style."
-        topics      = ["conventions", "documentation", "standards"]
-      }
       prose = {
         name              = "prose"
         path              = "prose"
@@ -105,7 +99,7 @@ trees = {
           iac = {
             name                 = "iac"
             path                 = "iac"
-            description          = "The konradodwrot group tree and the sandbox identity it holds, as Terraform."
+            description          = "The konradodwrot group tree and the identities it holds, as Terraform."
             topics               = ["terraform", "infrastructure", "gitlab", "gcp", "iac", "secrets"]
             protect_all_branches = true
           }
