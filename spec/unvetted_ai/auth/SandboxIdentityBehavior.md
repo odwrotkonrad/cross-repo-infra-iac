@@ -1,7 +1,7 @@
 <!--[>] 🤖🤖 -->
 Feature: Sandbox identity provisioned by the auth module
 
-Scenario: an agent session pushes work and opens MRs without ever holding a destructive credential
+Scenario: an agent session pushes work and opens MRs without holding a destructive credential
   Status: todo
   Given the applied auth module minted the `sandbox-rw-nodelete` group access token (developer, api + read_repository + write_repository) on `konradodwrot`
   When a sandbox pod authenticates gitlab with that token
