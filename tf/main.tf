@@ -133,6 +133,12 @@ module "gcp" {
   gcp_project        = var.gcp_project
   gcp_applier_member = var.gcp_applier_member
   gcp_ci_member      = var.gcp_ci_member
+
+  gcp_billing_account = var.gcp_billing_account
+  budget_amount       = var.budget_amount
+  budget_currency     = var.budget_currency
+  budget_alert_email  = var.budget_alert_email
+  budget_alert_sms    = var.budget_alert_sms
 }
 
 module "auth" {
@@ -162,6 +168,7 @@ module "gitlab" {
   token_group_path = var.trees["konradodwrot"].path
   token_expires_at = var.token_expires_at
   ci_gitlab_token  = var.ci_gitlab_token
+  enable_darwin_ci = var.enable_darwin_ci
 
   ci_op_service_account_token = var.op_service_account_token
   ci_gcp_billing_account      = var.gcp_billing_account

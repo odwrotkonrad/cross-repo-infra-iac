@@ -128,3 +128,35 @@ variable "ci_google_credentials" {
   sensitive = true
 }
 ##[<] 🤖🤖
+
+##[>] 🤖🤖
+#[why] group-level darwin CI toggle: "true" runs the macOS jobs, anything else skips them
+variable "enable_darwin_ci" {
+  type    = string
+  default = "false"
+}
+##[<] 🤖🤖
+
+##[>] 🤖🤖
+#[why] total-spend budget on the billing account: warn at half, critical at the amount, plus a forecast rule
+variable "budget_amount" {
+  type    = string
+  default = "100"
+}
+
+variable "budget_currency" {
+  type    = string
+  default = "USD"
+}
+
+variable "budget_alert_email" {
+  type    = string
+  default = "odwrotkonrad@gmail.com"
+}
+
+#[why] empty skips the sms channel; set it and verify the number in the console once
+variable "budget_alert_sms" {
+  type    = string
+  default = ""
+}
+##[<] 🤖🤖
