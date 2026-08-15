@@ -30,4 +30,8 @@ output "ssh_signing_key_pub_secret" {
 output "ssh_signing_public_key" {
   value = module.sandbox.ssh_signing_public_key
 }
+
+output "control_gitlab_token_secret" {
+  value = module.control.gitlab_token_secret
+}
 ##[<] 🤖🤖
