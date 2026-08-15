@@ -22,6 +22,15 @@ module "release_signing" {
   gpg_email               = var.apt_gpg_email
 }
 
+module "control" {
+  source = "./control"
+
+  gitlab_group_id      = var.gitlab_group_id
+  token_expires_at     = var.token_expires_at
+  gcp_project_id       = module.sandbox.project_id
+  control_project_path = var.control_project_path
+}
+
 module "host" {
   source = "./host"
 

@@ -1,0 +1,11 @@
+##[>] 🤖🤖
+upstream:
+  - prose/repo-prose
+  - prose/conventions-doc
+  - prose/doc-templates
+  - prose/license
+  - configs/llm/claude
+  - infra/oci-images/ci-linux
+downstream:
+  - {name: tf-lock, type: lockfile}
+##[<] 🤖🤖

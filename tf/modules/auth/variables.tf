@@ -48,6 +48,10 @@ variable "apt_gpg_email" {
   type = string
 }
 
+variable "control_project_path" {
+  type = string
+}
+
 variable "user_ssh_keys" {
   type = map(object({
     key        = string
