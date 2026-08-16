@@ -12,7 +12,7 @@ COMMANDS := render-templates repo-ci-prepare-hooks repo-ci-precommit-all init fm
 ##[>] Docs [genai-include]
 #[what] render *.ontoRepo.tpl onto the repo (.env, makefile.agents.md, repo-structure.md, CLAUDE.md, AGENTS.md, README.md)
 render-templates:
-	@che render-templates
+	@che render-templates --profiles=ontoRepo
 ##[<] Docs
 
 ##[>] CI [genai-include]
