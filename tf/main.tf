@@ -133,6 +133,10 @@ module "gcp" {
   gcp_project        = var.gcp_project
   gcp_applier_member = var.gcp_applier_member
   gcp_ci_member      = var.gcp_ci_member
+
+  gcp_billing_account = var.gcp_billing_account
+  budget_amount       = var.budget_amount
+  budget_alert_email  = var.budget_alert_email
 }
 
 module "auth" {
@@ -154,6 +158,17 @@ module "auth" {
   user_ssh_keys           = var.user_ssh_keys
 }
 
+module "ci_cluster" {
+  source = "./modules/ci-cluster"
+
+  project_id          = var.ci_project_id
+  project_name        = var.ci_project_name
+  gcp_org_id          = var.gcp_org_id
+  gcp_billing_account = var.gcp_billing_account
+  gcp_ci_member       = var.gcp_ci_member
+  gitlab_group_id     = module.gitlab.group_ids[var.trees["konradodwrot"].path]
+}
+
 module "gitlab" {
   source = "./modules/gitlab"
 
@@ -162,6 +177,7 @@ module "gitlab" {
   token_group_path = var.trees["konradodwrot"].path
   token_expires_at = var.token_expires_at
   ci_gitlab_token  = var.ci_gitlab_token
+  enable_darwin_ci = var.enable_darwin_ci
 
   ci_op_service_account_token = var.op_service_account_token
   ci_gcp_billing_account      = var.gcp_billing_account

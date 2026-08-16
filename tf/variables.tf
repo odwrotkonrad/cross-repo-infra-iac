@@ -128,3 +128,41 @@ variable "ci_google_credentials" {
   sensitive = true
 }
 ##[<] 🤖🤖
+
+##[>] 🤖🤖
+#[why] group-level darwin CI toggle: "true" runs the macOS jobs, anything else skips them
+variable "enable_darwin_ci" {
+  type    = string
+  default = "false"
+}
+##[<] 🤖🤖
+
+##[>] 🤖🤖
+#[why] total-spend budget on the billing account: warn at half, critical at the amount, plus a forecast rule
+variable "budget_amount" {
+  type    = string
+  default = "100"
+}
+
+
+variable "budget_alert_email" {
+  type    = string
+  default = "odwrotkonrad@gmail.com"
+}
+
+##[<] 🤖🤖
+
+##[>] 🤖🤖
+#[why] the pre-existing staging project, adopted by import: CI spend reads as one figure per project.
+#   this id must match the real project exactly, or terraform plans a replacement that destroys it
+variable "ci_project_id" {
+  type    = string
+  default = "staging-499418"
+}
+
+#[why] must match the project's existing display name, or the import shows a spurious diff
+variable "ci_project_name" {
+  type    = string
+  default = "staging"
+}
+##[<] 🤖🤖
