@@ -28,6 +28,7 @@ resource "google_container_cluster" "ci" {
     services_secondary_range_name = "services"
   }
 
+
   #[why] OPTIMIZE_UTILIZATION: GKE exposes no scale-down timer (no --scale-down-unneeded-time in
   #   gcloud or terraform), only this profile. it sheds an unneeded node within about two minutes
   #   rather than holding it ten, trading a 60-120s cold start on the next job for paying nothing
@@ -51,6 +52,11 @@ resource "google_container_node_pool" "manager" {
   location   = var.zone
   cluster    = google_container_cluster.ci.name
   node_count = 1
+
+  #[why] the manager needs no external IP either: it long-polls GitLab out through the Cloud NAT
+  network_config {
+    enable_private_nodes = true
+  }
 
   node_config {
     machine_type = var.manager_machine_type
@@ -87,6 +93,15 @@ resource "google_container_node_pool" "ci" {
   autoscaling {
     min_node_count = 0
     max_node_count = var.ci_max_nodes_per_pool
+  }
+
+  #[why] private nodes take no external IP, so pool size is bounded by max_node_count rather than the
+  #   region's IN_USE_ADDRESSES quota. that quota is 8 and one public IP per node hit it at a single
+  #   worker, leaving scale-up in QUOTA_EXCEEDED backoff and every queued job Pending. egress runs
+  #   through the Cloud NAT in network.tf, which is all these nodes need: runners poll GitLab out,
+  #   nothing dials in. set per pool, not on the cluster, where it would force a full replacement
+  network_config {
+    enable_private_nodes = true
   }
 
   node_config {
