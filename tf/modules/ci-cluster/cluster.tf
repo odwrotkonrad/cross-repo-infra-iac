@@ -28,12 +28,12 @@ resource "google_container_cluster" "ci" {
     services_secondary_range_name = "services"
   }
 
-  #[why] BALANCED, not OPTIMIZE_UTILIZATION: GKE exposes no scale-down timer (no
-  #   --scale-down-unneeded-time in gcloud or terraform), only this profile. BALANCED holds an
-  #   unneeded node roughly ten minutes instead of shedding it within two, so the stages of one
-  #   pipeline and back-to-back pushes reuse a warm node instead of each paying a 60-120s cold start
+  #[why] OPTIMIZE_UTILIZATION: GKE exposes no scale-down timer (no --scale-down-unneeded-time in
+  #   gcloud or terraform), only this profile. it sheds an unneeded node within about two minutes
+  #   rather than holding it ten, trading a 60-120s cold start on the next job for paying nothing
+  #   between bursts. BALANCED is the alternative if cold starts start to hurt
   cluster_autoscaling {
-    autoscaling_profile = "BALANCED"
+    autoscaling_profile = "OPTIMIZE_UTILIZATION"
   }
 
   #[why] deletion_protection defaults on and would block `terraform destroy` of a CI cluster that is
