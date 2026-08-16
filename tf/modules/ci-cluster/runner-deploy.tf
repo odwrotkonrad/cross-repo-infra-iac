@@ -4,7 +4,12 @@
 #   one [[runners]] on the registration path, but accepts a complete config here. requests are the
 #   scheduling reservation, limits the hard ceiling, both declared per size so no unit arithmetic can
 #   silently corrupt a quantity. node_selector pins an entry to its pool, and the toleration is what
-#   admits the job pod onto tainted CI nodes at all
+#   admits the job pod onto tainted CI nodes at all.
+#
+#   the /certs empty_dir is what makes docker:dind work: dind generates its TLS certs into
+#   DOCKER_TLS_CERTDIR and the build container reads them back. under the docker executor they share
+#   a volume implicitly, but k8s job containers share nothing unless declared, so without this every
+#   dind job dies on "open /certs/client/ca.pem: no such file or directory"
 locals {
   #[why] configOverride is written verbatim as config.toml, so the globals must live in it: values set
   #   elsewhere in the chart are ignored on this path. concurrent caps job pods across every entry, and
@@ -31,6 +36,9 @@ locals {
           memory_limit = "${var.job_sizes[v.size].memory_limit}"
           helper_cpu_request = "50m"
           helper_memory_request = "64Mi"
+        [[runners.kubernetes.volumes.empty_dir]]
+          name = "docker-certs"
+          mount_path = "/certs"
         [runners.kubernetes.node_selector]
           "ci-arch" = "${v.arch}"
         [runners.kubernetes.node_tolerations]
