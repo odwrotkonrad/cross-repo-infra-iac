@@ -31,6 +31,10 @@ trees = {
         description       = "Cross-repo automation: prose propagation, dependency graph, regen MRs, local sync."
         topics            = ["automation", "ci", "dependency-graph", "gitlab"]
         push_access_level = "maintainer"
+
+        #[why] prose's tag bridge forwards yaml + dotenv vars as pipeline variables: no_one_allowed rejects them, failing downstream creation
+        ci_pipeline_variables_role = "maintainer"
+        job_token_allowlist        = ["prose"]
       }
       configs = {
         name             = "configs"

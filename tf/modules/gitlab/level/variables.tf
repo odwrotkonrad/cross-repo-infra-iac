@@ -25,6 +25,7 @@ variable "projects" {
     pages_unique_domain        = optional(bool)
     ci_pipeline_variables_role = optional(string)
     protect_all_branches       = optional(bool, false)
+    job_token_allowlist        = optional(set(string), [])
   }))
 }
 
