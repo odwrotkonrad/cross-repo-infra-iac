@@ -39,6 +39,9 @@ resource "google_project_iam_member" "ci_applier" {
     #[why] the runner cache bucket lives in this project: creating it and granting the runner access
     #   to it is the applier's work, still bounded by the project
     "roles/storage.admin",
+    #[why] raising the project's cpu quota is what lets the autoscaler add the nodes the pool caps
+    #   already promise: without this the applier can declare a quota preference but not submit it
+    "roles/cloudquotas.admin",
   ])
 
   project = google_project.ci.project_id
