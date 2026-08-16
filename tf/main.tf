@@ -102,6 +102,7 @@ locals {
             pages_unique_domain        = try(p.pages_unique_domain, null)
             ci_pipeline_variables_role = try(p.ci_pipeline_variables_role, null)
             protect_all_branches       = try(p.protect_all_branches, false)
+            job_token_allowlist        = [for t in try(p.job_token_allowlist, []) : "${g.path}/${t}"]
           }
         }
       ]...)

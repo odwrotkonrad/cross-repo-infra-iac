@@ -20,6 +20,7 @@ variable "trees" {
       enable_local_runner        = optional(bool, false)
       pages_unique_domain        = optional(bool)
       ci_pipeline_variables_role = optional(string)
+      job_token_allowlist        = optional(set(string), [])
     })), {})
     groups = optional(any, {})
   }))

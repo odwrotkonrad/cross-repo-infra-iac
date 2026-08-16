@@ -60,6 +60,14 @@ resource "gitlab_project_runner_enablement" "local" {
   runner_id = var.local_runner_id
 }
 
+#[why] inbound job token scope is on by default: a project triggering a downstream pipeline here must be listed, else the bridge fails with downstream_pipeline_creation_failed
+resource "gitlab_project_job_token_scope" "this" {
+  for_each = { for e in flatten([for k, p in var.projects : [for t in p.job_token_allowlist : { project = k, target = t }]]) : "${e.project}<-${e.target}" => e }
+
+  project           = gitlab_project.this[each.value.project].id
+  target_project_id = gitlab_project.this[each.value.target].id
+}
+
 resource "gitlab_project_push_mirror" "github" {
   for_each = { for k, p in var.projects : k => p if p.github_mirror }
 
