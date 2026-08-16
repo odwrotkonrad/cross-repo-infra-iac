@@ -153,6 +153,21 @@ variable "job_default_size" {
   default = "medium"
 }
 
+#[why] 72 = both pools at their cap plus the manager, with headroom: 8 x 4 vcpu amd64, 8 x 4 vcpu
+#   arm64, one 2 vcpu manager is 66, and a node being replaced can be counted twice for a moment.
+#   sized off ci_max_nodes_per_pool on purpose, so the node cap stays the real ceiling and this quota
+#   never becomes a second, invisible one. raising the node cap means raising this with it
+variable "ci_cpu_quota" {
+  type    = number
+  default = 72
+}
+
+#[why] google requires a contact address on a quota increase request, and rejects the request without
+#   one. no default: a wrong address here means an approval nobody sees
+variable "quota_contact_email" {
+  type = string
+}
+
 #[why] 1 day, because a longer window buys almost nothing: every pipeline rewrites the keys it uses,
 #   so an entry older than a day is one no active branch is touching. keeping only a day cuts storage
 #   roughly sevenfold against a week and bounds how long a poisoned or corrupt entry can survive to

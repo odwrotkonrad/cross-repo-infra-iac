@@ -168,6 +168,8 @@ module "ci_cluster" {
   gcp_billing_account = var.gcp_billing_account
   gcp_ci_member       = var.gcp_ci_member
   gitlab_group_id     = module.gitlab.group_ids[var.trees["konradodwrot"].path]
+  #[why] the same address the budget alerts go to: one place owns where infrastructure mail lands
+  quota_contact_email = var.budget_alert_email
 }
 
 module "gitlab" {
