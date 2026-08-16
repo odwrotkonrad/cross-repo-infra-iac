@@ -22,10 +22,22 @@ resource "google_storage_bucket" "runner_cache" {
   uniform_bucket_level_access = true
   public_access_prevention    = "enforced"
 
+  #[why] the bucket is always non-empty, and every object in it is disposable: without this a
+  #   destroy or a rename fails on "bucket not empty" and has to be emptied by hand first
+  force_destroy = true
+
   #[why] cache contents are reproducible by recompiling, so a superseded entry has no recovery
   #   value: versioning here would bill for copies nobody would ever restore
   versioning {
     enabled = false
+  }
+
+  #[why] disabled, and this is the one that actually matters for the bill: GCS defaults soft delete
+  #   to 7 days, billing every deleted or overwritten object as stored for those 7 days. this cache
+  #   overwrites its keys on every pipeline, so the default would retain a week of superseded copies
+  #   and make the 1-day lifecycle rule below almost meaningless. 0 opts out entirely
+  soft_delete_policy {
+    retention_duration_seconds = 0
   }
 
   #[why] the whole retention story. entries are rewritten every pipeline and never pruned by the
