@@ -152,4 +152,13 @@ variable "job_default_size" {
   type    = string
   default = "medium"
 }
+
+#[why] 7 days keeps a week of merge-request iteration restoring warm while bounding both the bill and
+#   how long a poisoned or corrupt entry can survive. a build cache is reproducible by recompiling, so
+#   the only cost of expiring one too early is a single cold build. shorten before abandoning the
+#   cache if storage ever stops paying for the pipeline time it removes
+variable "runner_cache_retention_days" {
+  type    = number
+  default = 7
+}
 ##[<] 🤖🤖
