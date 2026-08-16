@@ -36,6 +36,9 @@ resource "google_project_iam_member" "ci_applier" {
     "roles/iam.serviceAccountUser",
     "roles/resourcemanager.projectIamAdmin",
     "roles/serviceusage.serviceUsageAdmin",
+    #[why] the runner cache bucket lives in this project: creating it and granting the runner access
+    #   to it is the applier's work, still bounded by the project
+    "roles/storage.admin",
   ])
 
   project = google_project.ci.project_id

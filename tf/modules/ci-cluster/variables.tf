@@ -152,4 +152,15 @@ variable "job_default_size" {
   type    = string
   default = "medium"
 }
+
+#[why] 1 day, because a longer window buys almost nothing: every pipeline rewrites the keys it uses,
+#   so an entry older than a day is one no active branch is touching. keeping only a day cuts storage
+#   roughly sevenfold against a week and bounds how long a poisoned or corrupt entry can survive to
+#   the same day. the cost of expiring one too early is a single cold build, since a build cache is
+#   reproducible by recompiling. raise only if pipelines on a branch left idle overnight start paying
+#   cold builds often enough to matter
+variable "runner_cache_retention_days" {
+  type    = number
+  default = 1
+}
 ##[<] 🤖🤖

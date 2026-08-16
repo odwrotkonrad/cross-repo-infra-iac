@@ -27,6 +27,18 @@ locals {
         token = "${gitlab_user_runner.ci[key].token}"
         executor = "kubernetes"
         request_concurrency = 4
+        #[why] declared before [runners.kubernetes]: these are sibling tables under [[runners]], and
+        #   in TOML every key after a table header belongs to that table until the next one. placed
+        #   after, [runners.cache] would read as a child of the kubernetes config and be ignored.
+        #   Shared makes one cache serve every runner entry, so a job cached by the amd64 medium
+        #   runner is restorable by any other, which is what lets sibling jobs and later pipelines
+        #   hit the same keys. no credentials here on purpose: omitting them is what makes the
+        #   client fall back to the ambient Workload Identity token, keeping the cluster key-free
+        [runners.cache]
+          Type = "gcs"
+          Shared = true
+          [runners.cache.gcs]
+            BucketName = "${google_storage_bucket.runner_cache.name}"
         [runners.kubernetes]
           namespace = "${var.runner_namespace}"
           image = "${var.runner_default_image}"
