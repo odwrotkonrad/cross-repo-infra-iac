@@ -8,6 +8,13 @@ resource "google_storage_bucket" "runner_cache" {
   project = google_project.ci.project_id
   name    = "${google_project.ci.project_id}-runner-cache"
 
+  #[why] nothing in this resource references the applier's storage.admin grant, so terraform is free
+  #   to create both at once: the first apply did exactly that and died on 403 storage.buckets.create,
+  #   the grant having landed 7s earlier but not yet propagated. this edge forces the grant first,
+  #   and google_project_iam_member returning only after the binding is committed is what makes the
+  #   ordering meaningful rather than merely cosmetic
+  depends_on = [google_project_iam_member.ci_applier]
+
   #[why] single-region, same region as the cluster: cache traffic then stays in-region and is not
   #   billed as egress. multi-region would pay replication for data that is disposable by definition
   location = var.region
