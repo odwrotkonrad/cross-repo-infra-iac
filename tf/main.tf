@@ -160,6 +160,15 @@ module "auth" {
   user_ssh_keys           = var.user_ssh_keys
 }
 
+module "ci_cluster" {
+  source = "./modules/ci-cluster"
+
+  project_id          = var.ci_project_id
+  dev_folder_name     = module.gcp.dev_folder_name
+  gcp_billing_account = var.gcp_billing_account
+  gitlab_group_id     = module.gitlab.group_ids[var.trees["konradodwrot"].path]
+}
+
 module "gitlab" {
   source = "./modules/gitlab"
 

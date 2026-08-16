@@ -160,3 +160,11 @@ variable "budget_alert_sms" {
   default = ""
 }
 ##[<] 🤖🤖
+
+##[>] 🤖🤖
+#[why] own project for the CI cluster: spend reads as one figure per project in billing reports
+variable "ci_project_id" {
+  type    = string
+  default = "konradodwrot-ci"
+}
+##[<] 🤖🤖
