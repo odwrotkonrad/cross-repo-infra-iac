@@ -23,4 +23,13 @@ resource "google_project_service" "billingbudgets" {
   service            = "billingbudgets.googleapis.com"
   disable_on_destroy = false
 }
+
+#[why] the ci-cluster module raises the cpu quota on its own project, but the api-enablement check
+#   lands on the provider's quota project, not the target: enabling cloudquotas only on the target
+#   still failed with "Cloud Quotas API has not been used in project 522456158618", which is this one
+resource "google_project_service" "cloudquotas" {
+  project            = var.gcp_project
+  service            = "cloudquotas.googleapis.com"
+  disable_on_destroy = false
+}
 ##[<] 🤖🤖
