@@ -25,4 +25,21 @@ resource "google_project_service" "compute" {
   service = "compute.googleapis.com"
 }
 
+
+#[why] the CI applier owns everything inside this project: network, cluster, node pools, service
+#   accounts. granted here rather than org-wide, so its reach stops at the CI project's boundary
+resource "google_project_iam_member" "ci_applier" {
+  for_each = toset([
+    "roles/compute.admin",
+    "roles/container.admin",
+    "roles/iam.serviceAccountAdmin",
+    "roles/iam.serviceAccountUser",
+    "roles/resourcemanager.projectIamAdmin",
+    "roles/serviceusage.serviceUsageAdmin",
+  ])
+
+  project = google_project.ci.project_id
+  role    = each.value
+  member  = var.gcp_ci_member
+}
 ##[<] 🤖🤖

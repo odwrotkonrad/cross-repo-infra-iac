@@ -47,4 +47,21 @@ resource "google_project_iam_member" "ci_iam_viewer_quota_project" {
   role    = "roles/iam.securityReviewer"
   member  = var.gcp_ci_member
 }
+
+#[why] the CI applier manages the monitoring notification channels the budget alerts on. scoped to
+#   the quota project where those channels live, not org-wide
+resource "google_project_iam_member" "ci_monitoring_editor" {
+  project = var.gcp_project
+  role    = "roles/monitoring.editor"
+  member  = var.gcp_ci_member
+}
+
+#[why] budgets live on the billing account, not a project: without this the CI applier can plan the
+#   budget but never read or write it
+resource "google_billing_account_iam_member" "ci_billing_admin" {
+  billing_account_id = var.gcp_billing_account
+  role               = "roles/billing.admin"
+  member             = var.gcp_ci_member
+}
+
 ##[<] 🤖🤖

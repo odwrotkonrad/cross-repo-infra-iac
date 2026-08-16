@@ -6,6 +6,14 @@
 #   silently corrupt a quantity. node_selector pins an entry to its pool, and the toleration is what
 #   admits the job pod onto tainted CI nodes at all
 locals {
+  #[why] configOverride is written verbatim as config.toml, so the globals must live in it: values set
+  #   elsewhere in the chart are ignored on this path. concurrent caps job pods across every entry, and
+  #   request_concurrency stops six runners long-polling one request at a time
+  runner_globals = <<-TOML
+    concurrent = ${var.runner_concurrent}
+    check_interval = 3
+  TOML
+
   runner_entries = join("\n", [
     for key, v in local.runner_variants : <<-TOML
       [[runners]]
@@ -13,6 +21,7 @@ locals {
         url = "${var.gitlab_url}"
         token = "${gitlab_user_runner.ci[key].token}"
         executor = "kubernetes"
+        request_concurrency = 4
         [runners.kubernetes]
           namespace = "${var.runner_namespace}"
           image = "${var.runner_default_image}"
@@ -57,8 +66,12 @@ resource "helm_release" "runner" {
     concurrent    = var.runner_concurrent
     checkInterval = 3
 
+    #[why] configOverride, not config: the chart writes `config` to config.template.toml and feeds it
+    #   to `gitlab-runner register`, which rejects more than one [[runners]] entry. configOverride is
+    #   written verbatim as config.toml and skips registration entirely, which is what serving six
+    #   entries from one manager requires
     runners = {
-      config = local.runner_entries
+      configOverride = "${local.runner_globals}\n${local.runner_entries}"
     }
 
     #[why] workload identity: the pod's k8s service account impersonates the GCP SA, so no key file

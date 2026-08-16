@@ -37,8 +37,10 @@ resource "google_container_cluster" "ci" {
   deletion_protection = false
 }
 
-#[why] always-on and not spot: the runner manager pod dispatches every job, so it must survive
-#   preemption and must still be running when both CI pools sit at zero
+#[why] always-on: this pool never scales to zero, because the manager pod it hosts is what notices a
+#   queued job at all. spot by default (see manager_spot): a preemption costs a minute or two of
+#   dispatch and orphans any in-flight job, which is the accepted trade for ~70% off the one node
+#   that runs continuously
 resource "google_container_node_pool" "manager" {
   project    = google_project_service.container.project
   name       = "manager"
@@ -48,6 +50,7 @@ resource "google_container_node_pool" "manager" {
 
   node_config {
     machine_type = var.manager_machine_type
+    spot         = var.manager_spot
     #[why] the manager holds no build data: it dispatches jobs and streams logs
     disk_size_gb = 20
     disk_type    = "pd-balanced"

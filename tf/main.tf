@@ -165,6 +165,7 @@ module "ci_cluster" {
   project_name        = var.ci_project_name
   gcp_org_id          = var.gcp_org_id
   gcp_billing_account = var.gcp_billing_account
+  gcp_ci_member       = var.gcp_ci_member
   gitlab_group_id     = module.gitlab.group_ids[var.trees["konradodwrot"].path]
 }
 

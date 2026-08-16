@@ -29,6 +29,11 @@ variable "gitlab_group_id" {
   type = string
 }
 
+#[why] the CI pipeline's applier identity, granted project-scoped admin on this project only
+variable "gcp_ci_member" {
+  type = string
+}
+
 #[why] us-central1: large long-established region at the lowest price tier, with the deepest spot
 #   capacity. a zonal cluster has no second zone to fall back on, so capacity depth matters here
 variable "region" {
@@ -68,12 +73,22 @@ variable "ci_disk_size_gb" {
   default = 50
 }
 
-#[why] e2-small over e2-micro: the manager pod is small, but GKE reserves ~250Mi of a micro's 1 GB
-#   and kube-system daemons take a few hundred more, leaving too little headroom to trust. the extra
-#   ~$7/month buys the certainty that the one always-on pod always schedules
+#[why] e2-standard-2, measured twice: shared-core machines (e2-small, e2-medium) expose only 940m
+#   allocatable regardless of their memory, and kube-system's own daemons request 861m of it, leaving
+#   less than this pod's 100m. only a full-core machine has room. GKE's overhead is near-constant per
+#   node, so shrinking the node shrinks only the part you can use
 variable "manager_machine_type" {
   type    = string
-  default = "e2-small"
+  default = "e2-standard-2"
+}
+
+#[why] spot for the manager too, trading availability for ~70% of its cost. when preempted, nothing
+#   dispatches jobs for the minute or two a replacement takes, and any in-flight job is orphaned:
+#   the runner tracks running jobs in memory and a fresh manager does not adopt them. queued jobs are
+#   unaffected, they simply wait. flip false if orphaned jobs become a nuisance
+variable "manager_spot" {
+  type    = bool
+  default = true
 }
 
 #[why] namespaced per workload, so a future workload lands beside the runners rather than replacing them
@@ -92,9 +107,12 @@ variable "gitlab_url" {
   default = "https://gitlab.com/"
 }
 
+#[why] 0.91.2 or newer: runners.configOverride, which writes config.toml verbatim and skips
+#   registration, does not exist in older charts. on 0.71.0 the key was silently ignored and the
+#   runner fell back to registering from a template, which rejects more than one [[runners]] entry
 variable "runner_chart_version" {
   type    = string
-  default = "0.71.0"
+  default = "0.91.2"
 }
 
 variable "runner_default_image" {
