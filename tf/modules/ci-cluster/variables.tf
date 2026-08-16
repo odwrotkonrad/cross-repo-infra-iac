@@ -3,7 +3,20 @@ variable "project_id" {
   type = string
 }
 
-variable "dev_folder_name" {
+#[why] generic: this cluster hosts the gitlab runners today, but nothing about it is runner-specific.
+#   workloads are separated by namespace, so a second one needs no new cluster
+variable "cluster_name" {
+  type    = string
+  default = "workloads"
+}
+
+#[why] must match the adopted project's existing display name, or terraform plans a rename
+variable "project_name" {
+  type = string
+}
+
+#[why] the project sits directly under the organization, not in the sandbox/dev folder tree
+variable "gcp_org_id" {
   type = string
 }
 
@@ -48,20 +61,25 @@ variable "ci_max_nodes_per_pool" {
   default = 8
 }
 
-#[why] dind is disk-bound more than CPU-bound, and pd-balanced IOPS scale with size
+#[why] dind needs room for image layers and build context, but jobs are short and the node is
+#   discarded after. 50 GB carries a dind build comfortably at half the disk cost of 100
 variable "ci_disk_size_gb" {
   type    = number
-  default = 100
+  default = 50
 }
 
+#[why] e2-small over e2-micro: the manager pod is small, but GKE reserves ~250Mi of a micro's 1 GB
+#   and kube-system daemons take a few hundred more, leaving too little headroom to trust. the extra
+#   ~$7/month buys the certainty that the one always-on pod always schedules
 variable "manager_machine_type" {
   type    = string
-  default = "e2-micro"
+  default = "e2-small"
 }
 
+#[why] namespaced per workload, so a future workload lands beside the runners rather than replacing them
 variable "runner_namespace" {
   type    = string
-  default = "gitlab-runner"
+  default = "ci-gitlab-runners"
 }
 
 variable "runner_service_account" {
@@ -90,15 +108,30 @@ variable "runner_concurrent" {
   default = 16
 }
 
-#[why] memory matches the SaaS default this replaces (8 GB tier); CPU is traded down for cost.
-#   two of these fit a 4 vCPU / 16 GB node with room for kubelet and system daemons
-variable "job_cpu_request" {
-  type    = string
-  default = "1500m"
+#[why] relative sizes, so a job asks for what it needs by name. medium matches the SaaS runner it
+#   replaces (8 GB tier) and is the default. memory requests are half the limits: scheduling reserves
+#   half of what a pod may consume, so a node hosts pods whose limits sum to twice its capacity, which
+#   suits jobs that spike briefly and idle between spikes. over its memory limit a pod is killed
+#   outright, so a starved job fails fast rather than crawling.
+#   no cpu limit on purpose: a cpu limit throttles, which is exactly the slow-forever failure to avoid.
+#   the cpu request still reserves and schedules, and under contention the kernel shares cpu in
+#   proportion to requests, so a job runs as fast as spare capacity allows
+variable "job_sizes" {
+  type = map(object({
+    cpu_request    = string
+    memory_request = string
+    memory_limit   = string
+  }))
+  default = {
+    small  = { cpu_request = "500m", memory_request = "1Gi", memory_limit = "2Gi" }
+    medium = { cpu_request = "1500m", memory_request = "3Gi", memory_limit = "6Gi" }
+    big    = { cpu_request = "3", memory_request = "6Gi", memory_limit = "12Gi" }
+  }
 }
 
-variable "job_memory_request" {
+#[why] the size a job gets when its tag names none
+variable "job_default_size" {
   type    = string
-  default = "6Gi"
+  default = "medium"
 }
 ##[<] 🤖🤖

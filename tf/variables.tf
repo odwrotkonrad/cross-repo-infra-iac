@@ -144,27 +144,25 @@ variable "budget_amount" {
   default = "100"
 }
 
-variable "budget_currency" {
-  type    = string
-  default = "USD"
-}
 
 variable "budget_alert_email" {
   type    = string
   default = "odwrotkonrad@gmail.com"
 }
 
-#[why] empty skips the sms channel; set it and verify the number in the console once
-variable "budget_alert_sms" {
-  type    = string
-  default = ""
-}
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖
-#[why] own project for the CI cluster: spend reads as one figure per project in billing reports
+#[why] the pre-existing staging project, adopted by import: CI spend reads as one figure per project.
+#   this id must match the real project exactly, or terraform plans a replacement that destroys it
 variable "ci_project_id" {
   type    = string
-  default = "konradodwrot-ci"
+  default = "staging-499418"
+}
+
+#[why] must match the project's existing display name, or the import shows a spurious diff
+variable "ci_project_name" {
+  type    = string
+  default = "staging"
 }
 ##[<] 🤖🤖

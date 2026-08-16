@@ -15,11 +15,6 @@ output "runner_service_account_email" {
   value = google_service_account.runner.email
 }
 
-#[why] the helm release reads each runner's token from these secrets via workload identity
-output "runner_token_secret_ids" {
-  value = { for k, s in google_secret_manager_secret.runner_token : k => s.secret_id }
-}
-
 #[why] `gcloud container clusters get-credentials` line for the runbook: scaling pools to zero is the
 #   documented response to a budget alert
 output "get_credentials_command" {

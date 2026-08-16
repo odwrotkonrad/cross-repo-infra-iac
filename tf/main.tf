@@ -136,9 +136,7 @@ module "gcp" {
 
   gcp_billing_account = var.gcp_billing_account
   budget_amount       = var.budget_amount
-  budget_currency     = var.budget_currency
   budget_alert_email  = var.budget_alert_email
-  budget_alert_sms    = var.budget_alert_sms
 }
 
 module "auth" {
@@ -164,7 +162,8 @@ module "ci_cluster" {
   source = "./modules/ci-cluster"
 
   project_id          = var.ci_project_id
-  dev_folder_name     = module.gcp.dev_folder_name
+  project_name        = var.ci_project_name
+  gcp_org_id          = var.gcp_org_id
   gcp_billing_account = var.gcp_billing_account
   gitlab_group_id     = module.gitlab.group_ids[var.trees["konradodwrot"].path]
 }

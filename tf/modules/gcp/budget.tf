@@ -11,20 +11,6 @@ resource "google_monitoring_notification_channel" "budget_email" {
   }
 }
 
-#[why] optional: terraform creates the channel but the number needs a one-time console verification
-#   before it delivers, so an unset variable must not block the apply
-resource "google_monitoring_notification_channel" "budget_sms" {
-  count = var.budget_alert_sms != "" ? 1 : 0
-
-  project      = var.gcp_project
-  display_name = "budget alerts (sms)"
-  type         = "sms"
-
-  labels = {
-    number = var.budget_alert_sms
-  }
-}
-
 #[why] whole billing account, not one project: the figure must read as total GCP exposure.
 #   thresholds are fractions of the amount, so raising budget_amount moves warn and critical together.
 #   forecasted fires while there is still time to act; the two actual rules fire after the fact
@@ -33,10 +19,10 @@ resource "google_billing_budget" "total" {
   billing_account = var.gcp_billing_account
   display_name    = "konradodwrot total spend"
 
+  #[why] no currency_code: it is inferred from the billing account, and setting it is rejected
   amount {
     specified_amount {
-      currency_code = var.budget_currency
-      units         = var.budget_amount
+      units = var.budget_amount
     }
   }
 
@@ -56,10 +42,7 @@ resource "google_billing_budget" "total" {
   }
 
   all_updates_rule {
-    monitoring_notification_channels = concat(
-      [google_monitoring_notification_channel.budget_email.id],
-      google_monitoring_notification_channel.budget_sms[*].id,
-    )
+    monitoring_notification_channels = [google_monitoring_notification_channel.budget_email.id]
     #[why] billing admins keep receiving the default mail as a backstop if a channel breaks
     disable_default_iam_recipients = false
   }

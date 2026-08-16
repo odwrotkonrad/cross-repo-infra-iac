@@ -26,18 +26,9 @@ variable "budget_amount" {
   default = "100"
 }
 
-variable "budget_currency" {
-  type    = string
-  default = "USD"
-}
 
 variable "budget_alert_email" {
   type = string
 }
 
-#[why] empty skips the sms channel: the number needs a one-time console verification terraform cannot do
-variable "budget_alert_sms" {
-  type    = string
-  default = ""
-}
 ##[<] 🤖🤖

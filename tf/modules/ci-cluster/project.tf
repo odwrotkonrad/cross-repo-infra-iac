@@ -1,11 +1,18 @@
 ##[>] 🤖🤖
-#[why] own project, not the sandbox auth one: CI spend reads as one figure in billing reports
-#   grouped by project, and a compromised runner cannot reach sandbox identity secrets
+#[why] pre-existing project adopted by import, not created here: its id, display name and org-level
+#   placement predate this module and must be reproduced exactly, or terraform plans a replacement
+#   that would destroy it. billing_account is the one thing this adds: GKE needs a billable project
 resource "google_project" "ci" {
-  name            = "ci-cluster"
+  name            = var.project_name
   project_id      = var.project_id
-  folder_id       = var.dev_folder_name
+  org_id          = var.gcp_org_id
   billing_account = var.gcp_billing_account
+
+  #[why] adopted, not owned: this project predates the config and may hold unrelated work, so
+  #   removing it from config must be a state removal, never a destroy
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_project_service" "container" {
@@ -18,8 +25,4 @@ resource "google_project_service" "compute" {
   service = "compute.googleapis.com"
 }
 
-resource "google_project_service" "secretmanager" {
-  project = google_project.ci.project_id
-  service = "secretmanager.googleapis.com"
-}
 ##[<] 🤖🤖

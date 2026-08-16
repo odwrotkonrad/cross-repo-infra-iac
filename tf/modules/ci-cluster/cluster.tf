@@ -4,7 +4,7 @@
 #   the cold start on the next job is the accepted trade for not paying for idle nodes
 resource "google_container_cluster" "ci" {
   project  = google_project_service.container.project
-  name     = "ci"
+  name     = var.cluster_name
   location = var.zone
 
   network    = google_compute_network.ci.id
@@ -48,10 +48,12 @@ resource "google_container_node_pool" "manager" {
 
   node_config {
     machine_type = var.manager_machine_type
-    disk_size_gb = 50
+    #[why] the manager holds no build data: it dispatches jobs and streams logs
+    disk_size_gb = 20
     disk_type    = "pd-balanced"
 
-    oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+    service_account = google_service_account.node.email
+    oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
 
     workload_metadata_config {
       mode = "GKE_METADATA"
@@ -86,7 +88,8 @@ resource "google_container_node_pool" "ci" {
     disk_size_gb = var.ci_disk_size_gb
     disk_type    = "pd-balanced"
 
-    oauth_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+    service_account = google_service_account.node.email
+    oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
 
     labels = {
       "ci-arch" = each.value.arch

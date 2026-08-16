@@ -1,14 +1,14 @@
 ##[>] 🤖🤖
 resource "google_compute_network" "ci" {
   project                 = google_project_service.compute.project
-  name                    = "ci"
+  name                    = var.cluster_name
   auto_create_subnetworks = false
 }
 
 #[why] secondary ranges carry pods and services: VPC-native (alias IP) clusters need them declared here
 resource "google_compute_subnetwork" "ci" {
   project       = google_project_service.compute.project
-  name          = "ci"
+  name          = var.cluster_name
   region        = var.region
   network       = google_compute_network.ci.id
   ip_cidr_range = "10.0.0.0/20"

@@ -1,19 +1,33 @@
 ##[>] 🤖🤖
-#[why] the chart reads the runner token from a k8s secret, so terraform writes the value it already
-#   holds from gitlab_user_runner rather than the pod fetching it at boot
-resource "kubernetes_secret_v1" "runner_token" {
-  for_each = var.ci_node_pools
-
-  metadata {
-    name      = "gitlab-runner-${each.value.arch}-token"
-    namespace = var.runner_namespace
-  }
-
-  data = {
-    runner-token = gitlab_user_runner.ci[each.key].token
-  }
-
-  depends_on = [kubernetes_namespace_v1.runner]
+#[why] one [[runners]] entry per architecture and size, all served by one manager. tokens come from
+#   terraform, so this replaces the chart's registration step entirely: the chart rejects more than
+#   one [[runners]] on the registration path, but accepts a complete config here. requests are the
+#   scheduling reservation, limits the hard ceiling, both declared per size so no unit arithmetic can
+#   silently corrupt a quantity. node_selector pins an entry to its pool, and the toleration is what
+#   admits the job pod onto tainted CI nodes at all
+locals {
+  runner_entries = join("\n", [
+    for key, v in local.runner_variants : <<-TOML
+      [[runners]]
+        name = "gke-${v.arch}-${v.size}"
+        url = "${var.gitlab_url}"
+        token = "${gitlab_user_runner.ci[key].token}"
+        executor = "kubernetes"
+        [runners.kubernetes]
+          namespace = "${var.runner_namespace}"
+          image = "${var.runner_default_image}"
+          privileged = true
+          cpu_request = "${var.job_sizes[v.size].cpu_request}"
+          memory_request = "${var.job_sizes[v.size].memory_request}"
+          memory_limit = "${var.job_sizes[v.size].memory_limit}"
+          helper_cpu_request = "50m"
+          helper_memory_request = "64Mi"
+        [runners.kubernetes.node_selector]
+          "ci-arch" = "${v.arch}"
+        [runners.kubernetes.node_tolerations]
+          "ci=true" = "NoSchedule"
+    TOML
+  ])
 }
 
 resource "kubernetes_namespace_v1" "runner" {
@@ -24,12 +38,11 @@ resource "kubernetes_namespace_v1" "runner" {
   depends_on = [google_container_node_pool.manager]
 }
 
-#[why] one release per architecture: each runs its own manager pod bound to one runner token and one
-#   node pool, so an arm64 job can never be picked up and then scheduled onto amd64 capacity
+#[why] one manager deployment for every architecture and size: the runner binary serves many
+#   [[runners]] entries from one process, so a new size or architecture is an entry, not another pod
+#   to run and pay for
 resource "helm_release" "runner" {
-  for_each = var.ci_node_pools
-
-  name      = "gitlab-runner-${each.value.arch}"
+  name      = "gitlab-runner"
   namespace = var.runner_namespace
 
   repository = "https://charts.gitlab.io"
@@ -39,31 +52,13 @@ resource "helm_release" "runner" {
   values = [yamlencode({
     gitlabUrl = var.gitlab_url
 
-    #[why] 16 concurrent jobs is the burst ceiling. the cluster autoscaler adds nodes only for pods
-    #   this creates, so pod count follows queue depth and node count follows pod count
+    #[why] the cluster autoscaler adds nodes only for pods this manager creates, so pod count follows
+    #   queue depth and node count follows pod count. this is the burst ceiling across all entries
     concurrent    = var.runner_concurrent
     checkInterval = 3
 
-    #[why] job pods request memory matching the SaaS default they replace, with CPU traded down for
-    #   cost. node_selector pins each job to its architecture's pool; the toleration is what lets it
-    #   onto the tainted CI nodes at all
     runners = {
-      secret = kubernetes_secret_v1.runner_token[each.key].metadata[0].name
-      config = <<-TOML
-        [[runners]]
-          [runners.kubernetes]
-            namespace = "${var.runner_namespace}"
-            image = "${var.runner_default_image}"
-            privileged = true
-            cpu_request = "${var.job_cpu_request}"
-            memory_request = "${var.job_memory_request}"
-            helper_cpu_request = "100m"
-            helper_memory_request = "128Mi"
-            [runners.kubernetes.node_selector]
-              "ci-arch" = "${each.value.arch}"
-            [runners.kubernetes.node_tolerations]
-              "ci=true" = "NoSchedule"
-      TOML
+      config = local.runner_entries
     }
 
     #[why] workload identity: the pod's k8s service account impersonates the GCP SA, so no key file
@@ -75,10 +70,11 @@ resource "helm_release" "runner" {
       }
     }
 
-    #[why] the manager dispatches work, it does not run builds, so it stays small
+    #[why] a request but no limit: the manager is the one pod that must never be throttled or killed,
+    #   since losing it stops every job being dispatched. it has its own node, so there is nothing to
+    #   protect the node from and nothing to share with
     resources = {
       requests = { cpu = "100m", memory = "128Mi" }
-      limits   = { cpu = "500m", memory = "512Mi" }
     }
 
     #[why] pinned to the on-demand manager pool: it must survive preemption of every CI node and
@@ -93,7 +89,7 @@ resource "helm_release" "runner" {
   })]
 
   depends_on = [
-    google_container_node_pool.manager,
+    kubernetes_namespace_v1.runner,
     google_service_account_iam_member.runner_workload_identity,
   ]
 }
