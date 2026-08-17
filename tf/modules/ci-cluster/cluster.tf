@@ -128,20 +128,10 @@ resource "google_container_node_pool" "ci" {
       effect = "NO_SCHEDULE"
     }
 
-    #[why] GKE taints every arm64 pool kubernetes.io/arch=arm64:NoSchedule whether or not terraform
-    #   asks, so declaring it changes no behavior and only makes it visible: a reader sees why arm64
-    #   job pods need a second toleration (runner-deploy.tf) instead of learning it from a job that
-    #   waited for a pod no node would accept. amd64 carries no such taint, hence the conditional
-    dynamic "taint" {
-      for_each = each.value.arch == "arm64" ? [1] : []
-
-      content {
-        key    = "kubernetes.io/arch"
-        value  = "arm64"
-        effect = "NO_SCHEDULE"
-      }
-    }
-
+    #[why] the arm64 pool also carries kubernetes.io/arch=arm64:NoSchedule, which is why arm64 job
+    #   pods need a second toleration (runner-deploy.tf). it is not declared here: kubernetes owns
+    #   that key and the api rejects setting it, "node taints with key kubernetes.io/arch are managed
+    #   by Kubernetes and must not be manually specified"
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
