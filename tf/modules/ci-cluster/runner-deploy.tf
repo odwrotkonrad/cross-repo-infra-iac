@@ -19,6 +19,11 @@ locals {
     check_interval = 3
   TOML
 
+  node_tolerations = {
+    amd64 = "          \"ci=true\" = \"NoSchedule\""
+    arm64 = "          \"ci=true\" = \"NoSchedule\"\n          \"kubernetes.io/arch=arm64\" = \"NoSchedule\""
+  }
+
   runner_entries = join("\n", [
     for key, v in local.runner_variants : <<-TOML
       [[runners]]
@@ -53,8 +58,12 @@ locals {
           mount_path = "/certs"
         [runners.kubernetes.node_selector]
           "ci-arch" = "${v.arch}"
+        #[why] GKE taints every arm64 node kubernetes.io/arch=arm64:NoSchedule of its own accord, on
+        #   top of the ci taint this module sets. tolerating only ci left arm64 job pods unschedulable
+        #   with no node ever matching, so the autoscaler saw nothing to scale for and every arm64 job
+        #   died waiting for a pod that could not be placed
         [runners.kubernetes.node_tolerations]
-          "ci=true" = "NoSchedule"
+${local.node_tolerations[v.arch]}
     TOML
   ])
 }
