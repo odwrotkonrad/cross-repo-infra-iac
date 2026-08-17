@@ -34,6 +34,10 @@ default:
       - stuck_or_timeout_failure
       - scheduler_failure
       - unknown_failure
+  #[why] a superseded pipeline holds pods for a commit nobody will merge, so cancellable by default
+  #   and the terraform jobs opt out individually: they hold a state lock, and killing one mid-run
+  #   leaves it held with no owner, blocking every later pipeline until an operator force-unlocks it
+  interruptible: true
   image: $CI_IMAGE
   tags:
     - gke-linux-amd64
@@ -58,34 +62,32 @@ validate-pre-commit-all:
     - make repo-ci-precommit-all
     - git diff --exit-code HEAD
 
-#[why] plan.tfplan embeds cleartext secrets (armored GPG key, SA key), so only the default-branch job uploads it for apply; branch plans keep log output only
+#[why] one job for every branch: apply consumes the artifact from the default-branch run, and a
+#   branch run's copy simply expires unread. plan.tfplan embeds cleartext secrets (armored GPG key,
+#   SA key) and is downloadable by any Reporter, so expire_in is kept short to bound that window:
+#   before this merge only the default branch uploaded it, and branch runs kept log output only
+#[why] not interruptible: terraform holds a lock on remote state, and a job killed mid-run leaves it
+#   held with no owner, blocking every later pipeline until someone force-unlocks it by hand
 plan:
   extends: .tf-creds
   stage: plan
   needs: []
+  interruptible: false
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH
   script:
     - make plan
   artifacts:
     paths:
       - tf/plan.tfplan
-    expire_in: 7 days
-
-plan-branch:
-  extends: .tf-creds
-  stage: plan
-  needs: []
-  rules:
-    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-  script:
-    - make plan
+    expire_in: 1 day
 
 apply:
   extends: .tf-creds
   stage: apply
   needs:
     - plan
+  interruptible: false
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:

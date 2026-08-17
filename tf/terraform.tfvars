@@ -67,9 +67,15 @@ trees = {
       go_modules = {
         name                = "go-modules"
         path                = "go-modules"
-        description         = "Go monorepo: che (spec-driven dotfile loader, with the render engine and doc-rendering CLIs as its render/ package tree), get-os-open-files-with, get-term-open-files-with. Per-module go.mod and dir-prefixed release tags."
+        description         = "Go monorepo: che (spec-driven dotfile loader, with the render engine as its render/ package tree, exposed as che render subcommands), get-os-open-files-with, get-term-open-files-with. Per-module go.mod and dir-prefixed release tags."
         topics              = ["go", "monorepo", "cli", "che"]
         pages_unique_domain = false
+      }
+      che_packages = {
+        name        = "che-packages"
+        path        = "che-packages"
+        description = "che's package catalog: packages.yml plus install scripts, published as a versioned definitions tarball. Every package's every install method proven by a pytest suite in containers."
+        topics      = ["packages", "che", "catalog", "pytest", "installers"]
       }
     }
 

@@ -22,6 +22,12 @@ resource "gitlab_project" "this" {
   pages_access_level = "enabled"
   public_jobs        = each.value.public_jobs
 
+  #[why] a pipeline whose commit was superseded produces a result nobody reads, while holding pods
+  #   the autoscaler would otherwise release. set here so every project carries it and a new repo
+  #   inherits it on creation. it cancels only jobs marking themselves interruptible, so this half
+  #   alone saves nothing: the pipelines declare the other half in their default: block
+  auto_cancel_pending_pipelines = "enabled"
+
   ci_pipeline_variables_minimum_override_role = each.value.ci_pipeline_variables_role
 }
 
