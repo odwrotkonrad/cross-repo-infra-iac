@@ -108,7 +108,11 @@ resource "google_container_node_pool" "ci" {
     machine_type = each.value.machine_type
     spot         = true
     disk_size_gb = var.ci_disk_size_gb
-    disk_type    = "pd-balanced"
+    #[why] C4A (Axion) rejects pd-balanced outright, taking hyperdisk-balanced only, so a hardcoded
+    #   pd-balanced failed every arm64 node creation with "disk type cannot be used by c4a-standard-4"
+    #   and left the pool permanently at zero. per pool, since the amd64 e2 machines predate hyperdisk
+    #   and stay on pd-balanced
+    disk_type = each.value.disk_type
 
     service_account = google_service_account.node.email
     oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
@@ -122,6 +126,20 @@ resource "google_container_node_pool" "ci" {
       key    = "ci"
       value  = "true"
       effect = "NO_SCHEDULE"
+    }
+
+    #[why] GKE taints every arm64 pool kubernetes.io/arch=arm64:NoSchedule whether or not terraform
+    #   asks, so declaring it changes no behavior and only makes it visible: a reader sees why arm64
+    #   job pods need a second toleration (runner-deploy.tf) instead of learning it from a job that
+    #   waited for a pod no node would accept. amd64 carries no such taint, hence the conditional
+    dynamic "taint" {
+      for_each = each.value.arch == "arm64" ? [1] : []
+
+      content {
+        key    = "kubernetes.io/arch"
+        value  = "arm64"
+        effect = "NO_SCHEDULE"
+      }
     }
 
     workload_metadata_config {

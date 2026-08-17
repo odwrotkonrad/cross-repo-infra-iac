@@ -90,4 +90,17 @@ resource "google_storage_bucket_iam_member" "runner_cache" {
   role   = "roles/storage.objectAdmin"
   member = "serviceAccount:${google_service_account.runner.email}"
 }
+
+#[why] objectAdmin permits the transfer but not the signing. the cache client reaches GCS through
+#   signed URLs, and an identity with no key file signs by calling signBlob on its own service
+#   account, which is a grant on the account rather than on the bucket. without it every archive and
+#   restore died on "unable to sign bytes: Permission 'iam.serviceAccounts.signBlob' denied" and the
+#   cache was inert in every pipeline while looking correctly configured. self-binding is the
+#   documented shape for a workload identity that signs its own URLs: scoped to this one account,
+#   not the project, so it cannot sign for any other identity
+resource "google_service_account_iam_member" "runner_sign" {
+  service_account_id = google_service_account.runner.name
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "serviceAccount:${google_service_account.runner.email}"
+}
 ##[<] 🤖🤖

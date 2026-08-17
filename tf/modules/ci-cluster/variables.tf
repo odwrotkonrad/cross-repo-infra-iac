@@ -46,21 +46,24 @@ variable "zone" {
   default = "us-central1-a"
 }
 
-#[why] 4 vCPU / 16 GB fits two 1.5 vCPU / 6 GB job pods plus system overhead, so the ~0.5 vCPU and
-#   ~1.5 GB the node reserves is paid once per two jobs instead of once per job
+#[why] 4 vCPU / 16 GB leaves ~3.6 vCPU / 12 GB once daemonsets take their share, fitting three
+#   1 vCPU / 3 GB medium pods, so the node's fixed overhead is paid once per three jobs. cpu is what
+#   binds: memory would allow four
 variable "ci_node_pools" {
   type = map(object({
     arch         = string
     machine_type = string
+    disk_type    = string
   }))
   default = {
-    linux-amd64 = { arch = "amd64", machine_type = "e2-standard-4" }
-    linux-arm64 = { arch = "arm64", machine_type = "c4a-standard-4" }
+    linux-amd64 = { arch = "amd64", machine_type = "e2-standard-4", disk_type = "pd-balanced" }
+    linux-arm64 = { arch = "arm64", machine_type = "c4a-standard-4", disk_type = "hyperdisk-balanced" }
   }
 }
 
-#[why] 8 nodes x 2 pods = the runner's 16-job concurrency cap, per pool, so either architecture can
-#   absorb a full burst alone. this is the hard spend ceiling: billing alerts arrive hours late
+#[why] 8 nodes x 3 medium pods = 24 job slots per pool, comfortably over the runner's 16-job
+#   concurrency cap, so either architecture absorbs a full burst alone and concurrency is what binds
+#   first. this stays the hard spend ceiling: billing alerts arrive hours late
 variable "ci_max_nodes_per_pool" {
   type    = number
   default = 8
@@ -120,7 +123,8 @@ variable "runner_default_image" {
   default = "registry.gitlab.com/konradodwrot/infra/oci-images/ci-linux:latest"
 }
 
-#[why] 16 job pods across 8 nodes per pool at 2 pods each: the runner cap and the node cap agree
+#[why] 16 job pods, reached at 6 of the 8 nodes a pool allows at 3 pods each: the runner cap binds
+#   before the node cap, leaving headroom rather than the two ceilings meeting exactly
 variable "runner_concurrent" {
   type    = number
   default = 16
@@ -142,7 +146,7 @@ variable "job_sizes" {
   }))
   default = {
     small  = { cpu_request = "500m", memory_request = "1Gi", memory_limit = "2Gi" }
-    medium = { cpu_request = "1500m", memory_request = "3Gi", memory_limit = "6Gi" }
+    medium = { cpu_request = "1000m", memory_request = "3Gi", memory_limit = "6Gi" }
     big    = { cpu_request = "3", memory_request = "6Gi", memory_limit = "12Gi" }
   }
 }
