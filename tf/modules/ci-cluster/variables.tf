@@ -118,6 +118,15 @@ variable "runner_chart_version" {
   default = "0.91.2"
 }
 
+#[why] the helper image the runner injects into every job pod, pre-pulled per node (image-prepull.tf).
+#   must track the runner version runner_chart_version deploys, or the daemonset warms a tag no job
+#   asks for and every job pulls anyway. check with:
+#   kubectl -n <ns> get deploy gitlab-runner -o jsonpath='{..containers[0].image}'
+variable "runner_helper_version" {
+  type    = string
+  default = "19.2.2"
+}
+
 variable "runner_default_image" {
   type    = string
   default = "registry.gitlab.com/konradodwrot/infra/oci-images/ci-linux:latest"
