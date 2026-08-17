@@ -47,6 +47,12 @@ locals {
         [runners.kubernetes]
           namespace = "${var.runner_namespace}"
           image = "${var.runner_default_image}"
+          #[why] pinned per entry, because the runner otherwise injects the helper matching its own
+          #   architecture into every job pod it creates. the manager runs on amd64, so arm64 jobs got
+          #   the x86_64 helper and died on an image that does not exist for their platform
+          #   ("NotFound" pulling gitlab-runner-helper:x86_64-*). the tag must also match the image
+          #   image-prepull.tf warms, or the prepull caches a tag no job asks for
+          helper_image = "registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:${local.helper_image_arch[v.arch]}-v${var.runner_helper_version}"
           privileged = true
           cpu_request = "${var.job_sizes[v.size].cpu_request}"
           memory_request = "${var.job_sizes[v.size].memory_request}"
