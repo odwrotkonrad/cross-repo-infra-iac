@@ -48,6 +48,15 @@ resource "google_project_iam_member" "ci_iam_viewer_quota_project" {
   member  = var.gcp_ci_member
 }
 
+#[why] a quota preference is submitted against the provider's quota project, not only the project
+#   whose quota is raised: the ci-cluster module grants cloudquotas.admin on its own project, and
+#   this is the matching grant on this one, without which the call is refused here instead
+resource "google_project_iam_member" "ci_cloudquotas_admin" {
+  project = var.gcp_project
+  role    = "roles/cloudquotas.admin"
+  member  = var.gcp_ci_member
+}
+
 #[why] the CI applier manages the monitoring notification channels the budget alerts on. scoped to
 #   the quota project where those channels live, not org-wide
 resource "google_project_iam_member" "ci_monitoring_editor" {

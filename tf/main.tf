@@ -170,6 +170,12 @@ module "ci_cluster" {
   gitlab_group_id     = module.gitlab.group_ids[var.trees["konradodwrot"].path]
   #[why] the same address the budget alerts go to: one place owns where infrastructure mail lands
   quota_contact_email = var.budget_alert_email
+
+  #[why] the quota preference this module creates is checked against the provider's quota project, so
+  #   it needs modules/gcp's cloudquotas service enabled first. nothing here references that resource,
+  #   so without this edge terraform is free to run them concurrently and fail on "api has not been
+  #   used in project"
+  depends_on = [module.gcp]
 }
 
 module "gitlab" {
