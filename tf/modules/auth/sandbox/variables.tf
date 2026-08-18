@@ -24,7 +24,6 @@ variable "token_expires_at" {
   type = string
 }
 
-#[why] trailing comment on the sandbox .pub keys (ssh-keygen comment slot); shows in ssh-add -l, agent, signed-commit key display
 variable "ssh_key_comment" {
   type = string
 }

@@ -1,5 +1,4 @@
 ##[>] 🤖🤖
-#[why] developer on protection_level=maintainer repos yields exactly: push non-protected branches + create MRs, no delete
 resource "gitlab_group_access_token" "sandbox" {
   group        = var.gitlab_group_id
   name         = "sandbox-rw-nodelete"

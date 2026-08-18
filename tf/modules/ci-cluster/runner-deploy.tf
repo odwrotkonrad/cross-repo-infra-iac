@@ -1,22 +1,14 @@
 ##[>] 🤖🤖
-#[why] one [[runners]] entry per architecture and size, all served by one manager. tokens come from
-#   terraform, so this replaces the chart's registration step entirely: the chart rejects more than
-#   one [[runners]] on the registration path, but accepts a complete config here. requests are the
-#   scheduling reservation, limits the hard ceiling, both declared per size so no unit arithmetic can
-#   silently corrupt a quantity. node_selector pins an entry to its pool, and the toleration is what
-#   admits the job pod onto tainted CI nodes at all.
-#
-#   the /certs empty_dir is what makes docker:dind work: dind generates its TLS certs into
-#   DOCKER_TLS_CERTDIR and the build container reads them back. under the docker executor they share
-#   a volume implicitly, but k8s job containers share nothing unless declared, so without this every
-#   dind job dies on "open /certs/client/ca.pem: no such file or directory"
 locals {
-  #[why] configOverride is written verbatim as config.toml, so the globals must live in it: values set
-  #   elsewhere in the chart are ignored on this path. concurrent caps job pods across every entry, and
-  #   request_concurrency stops six runners long-polling one request at a time
+  helper_image_arch = {
+    amd64 = "x86_64"
+    arm64 = "arm64"
+  }
+
   runner_globals = <<-TOML
     concurrent = ${var.runner_concurrent}
     check_interval = 3
+    log_level = "${var.runner_log_level}"
   TOML
 
   node_tolerations = {
@@ -32,13 +24,6 @@ locals {
         token = "${gitlab_user_runner.ci[key].token}"
         executor = "kubernetes"
         request_concurrency = 4
-        #[why] declared before [runners.kubernetes]: these are sibling tables under [[runners]], and
-        #   in TOML every key after a table header belongs to that table until the next one. placed
-        #   after, [runners.cache] would read as a child of the kubernetes config and be ignored.
-        #   Shared makes one cache serve every runner entry, so a job cached by the amd64 medium
-        #   runner is restorable by any other, which is what lets sibling jobs and later pipelines
-        #   hit the same keys. no credentials here on purpose: omitting them is what makes the
-        #   client fall back to the ambient Workload Identity token, keeping the cluster key-free
         [runners.cache]
           Type = "gcs"
           Shared = true
@@ -47,13 +32,10 @@ locals {
         [runners.kubernetes]
           namespace = "${var.runner_namespace}"
           image = "${var.runner_default_image}"
-          #[why] pinned per entry, because the runner otherwise injects the helper matching its own
-          #   architecture into every job pod it creates. the manager runs on amd64, so arm64 jobs got
-          #   the x86_64 helper and died on an image that does not exist for their platform
-          #   ("NotFound" pulling gitlab-runner-helper:x86_64-*). the tag must also match the image
-          #   image-prepull.tf warms, or the prepull caches a tag no job asks for
           helper_image = "registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:${local.helper_image_arch[v.arch]}-v${var.runner_helper_version}"
           privileged = true
+          poll_timeout = ${var.runner_poll_timeout}
+          pull_policy = ["if-not-present"]
           cpu_request = "${var.job_sizes[v.size].cpu_request}"
           memory_request = "${var.job_sizes[v.size].memory_request}"
           memory_limit = "${var.job_sizes[v.size].memory_limit}"
@@ -64,10 +46,6 @@ locals {
           mount_path = "/certs"
         [runners.kubernetes.node_selector]
           "ci-arch" = "${v.arch}"
-        #[why] GKE taints every arm64 node kubernetes.io/arch=arm64:NoSchedule of its own accord, on
-        #   top of the ci taint this module sets. tolerating only ci left arm64 job pods unschedulable
-        #   with no node ever matching, so the autoscaler saw nothing to scale for and every arm64 job
-        #   died waiting for a pod that could not be placed
         [runners.kubernetes.node_tolerations]
 ${local.node_tolerations[v.arch]}
     TOML
@@ -82,9 +60,6 @@ resource "kubernetes_namespace_v1" "runner" {
   depends_on = [google_container_node_pool.manager]
 }
 
-#[why] one manager deployment for every architecture and size: the runner binary serves many
-#   [[runners]] entries from one process, so a new size or architecture is an entry, not another pod
-#   to run and pay for
 resource "helm_release" "runner" {
   name      = "gitlab-runner"
   namespace = var.runner_namespace
@@ -96,20 +71,13 @@ resource "helm_release" "runner" {
   values = [yamlencode({
     gitlabUrl = var.gitlab_url
 
-    #[why] the cluster autoscaler adds nodes only for pods this manager creates, so pod count follows
-    #   queue depth and node count follows pod count. this is the burst ceiling across all entries
     concurrent    = var.runner_concurrent
     checkInterval = 3
 
-    #[why] configOverride, not config: the chart writes `config` to config.template.toml and feeds it
-    #   to `gitlab-runner register`, which rejects more than one [[runners]] entry. configOverride is
-    #   written verbatim as config.toml and skips registration entirely, which is what serving six
-    #   entries from one manager requires
     runners = {
       configOverride = "${local.runner_globals}\n${local.runner_entries}"
     }
 
-    #[why] workload identity: the pod's k8s service account impersonates the GCP SA, so no key file
     serviceAccount = {
       create = true
       name   = var.runner_service_account
@@ -118,15 +86,10 @@ resource "helm_release" "runner" {
       }
     }
 
-    #[why] a request but no limit: the manager is the one pod that must never be throttled or killed,
-    #   since losing it stops every job being dispatched. it has its own node, so there is nothing to
-    #   protect the node from and nothing to share with
     resources = {
       requests = { cpu = "100m", memory = "128Mi" }
     }
 
-    #[why] pinned to the on-demand manager pool: it must survive preemption of every CI node and
-    #   still be running when both CI pools sit at zero
     nodeSelector = {
       "cloud.google.com/gke-nodepool" = google_container_node_pool.manager.name
     }

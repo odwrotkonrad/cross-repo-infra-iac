@@ -27,7 +27,6 @@ output "ssh_signing_key_pub_secret" {
   value = module.auth.ssh_signing_key_pub_secret
 }
 
-#[why] one-time manual: `terraform output -raw ssh_signing_public_key` -> POST /user/keys usage_type=signing (provider has no signing usage_type)
 output "ssh_signing_public_key" {
   value = module.auth.ssh_signing_public_key
 }
