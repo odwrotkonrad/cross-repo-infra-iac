@@ -21,7 +21,6 @@ resource "google_project_service" "orgpolicy" {
   service = "orgpolicy.googleapis.com"
 }
 
-#[why] the org enforces iam.disableServiceAccountKeyCreation; this project needs the long-lived key op.tf stores, so the constraint is lifted here only
 resource "google_org_policy_policy" "allow_sa_key_creation" {
   name   = "projects/${google_project.auth.project_id}/policies/iam.disableServiceAccountKeyCreation"
   parent = "projects/${google_project.auth.project_id}"

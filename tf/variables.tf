@@ -26,7 +26,6 @@ variable "trees" {
   }))
 }
 
-#[why] gate the konradodwrot root: false keeps it declared but out of the plan while git-repos still owns it in its own state; flip true after state adoption.
 variable "manage_konradodwrot" {
   type    = bool
   default = false
@@ -75,13 +74,11 @@ variable "gcp_org_id" {
   default = "882523005777"
 }
 
-#[why] set via TF_VAR_gcp_billing_account at plan/apply, never committed
 variable "gcp_billing_account" {
   type      = string
   sensitive = true
 }
 
-#[why] 1P service account scoped write to the sandbox vault only: set via TF_VAR_op_service_account_token (or OP_SERVICE_ACCOUNT_TOKEN) at plan/apply
 variable "op_service_account_token" {
   type      = string
   sensitive = true
@@ -117,13 +114,11 @@ variable "token_expires_at" {
   type = string
 }
 
-#[why] required, no empty default: an apply without TF_VAR_ci_gitlab_token would blank the CI variable. restricted CI's own gitlab token, NOT the sandbox token
 variable "ci_gitlab_token" {
   type      = string
   sensitive = true
 }
 
-#[why] required, no empty default: an apply without TF_VAR_ci_google_credentials would blank the CI variable. base64 SA key of the CI applier
 variable "ci_google_credentials" {
   type      = string
   sensitive = true
@@ -131,7 +126,6 @@ variable "ci_google_credentials" {
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖
-#[why] group-level darwin CI toggle: "true" runs the macOS jobs, anything else skips them
 variable "enable_darwin_ci" {
   type    = string
   default = "false"
@@ -139,7 +133,6 @@ variable "enable_darwin_ci" {
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖
-#[why] total-spend budget on the billing account: warn at half, critical at the amount, plus a forecast rule
 variable "budget_amount" {
   type    = string
   default = "100"
@@ -154,14 +147,11 @@ variable "budget_alert_email" {
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖
-#[why] the pre-existing staging project, adopted by import: CI spend reads as one figure per project.
-#   this id must match the real project exactly, or terraform plans a replacement that destroys it
 variable "ci_project_id" {
   type    = string
   default = "staging-499418"
 }
 
-#[why] must match the project's existing display name, or the import shows a spurious diff
 variable "ci_project_name" {
   type    = string
   default = "staging"

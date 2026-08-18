@@ -22,10 +22,6 @@ resource "gitlab_project" "this" {
   pages_access_level = "enabled"
   public_jobs        = each.value.public_jobs
 
-  #[why] a pipeline whose commit was superseded produces a result nobody reads, while holding pods
-  #   the autoscaler would otherwise release. set here so every project carries it and a new repo
-  #   inherits it on creation. it cancels only jobs marking themselves interruptible, so this half
-  #   alone saves nothing: the pipelines declare the other half in their default: block
   auto_cancel_pending_pipelines = "enabled"
 
   ci_pipeline_variables_minimum_override_role = each.value.ci_pipeline_variables_role
@@ -41,7 +37,6 @@ resource "gitlab_branch_protection" "this" {
   allow_force_push   = each.value.allow_force_push
 }
 
-#[why] every ref protected: branch pipelines all run on protected refs (protected CI vars flow), and the Developer sandbox token cannot push any branch. costs: merged branches cannot be deleted, and with github_mirror every branch mirrors (only_protected_branches matches all)
 resource "gitlab_branch_protection" "all" {
   for_each = { for k, p in var.projects : k => p if p.protect_all_branches }
 
@@ -66,7 +61,6 @@ resource "gitlab_project_runner_enablement" "local" {
   runner_id = var.local_runner_id
 }
 
-#[why] inbound job token scope is on by default: a project triggering a downstream pipeline here must be listed, else the bridge fails with downstream_pipeline_creation_failed
 resource "gitlab_project_job_token_scope" "this" {
   for_each = { for e in flatten([for k, p in var.projects : [for t in p.job_token_allowlist : { project = k, target = t }]]) : "${e.project}<-${e.target}" => e }
 

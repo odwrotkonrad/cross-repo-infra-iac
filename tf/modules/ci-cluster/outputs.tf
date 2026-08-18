@@ -15,8 +15,6 @@ output "runner_service_account_email" {
   value = google_service_account.runner.email
 }
 
-#[why] `gcloud container clusters get-credentials` line for the runbook: scaling pools to zero is the
-#   documented response to a budget alert
 output "get_credentials_command" {
   value = "gcloud container clusters get-credentials ${google_container_cluster.ci.name} --zone ${google_container_cluster.ci.location} --project ${google_project.ci.project_id}"
 }

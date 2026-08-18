@@ -1,12 +1,10 @@
 ##[>] 🤖🤖
 locals {
-  #[why] konradodwrot root stays declared but out of the plan until its state is adopted (manage_konradodwrot flips true).
   active_trees = {
     for k, t in var.trees : k => t
     if k != "konradodwrot" || var.manage_konradodwrot
   }
 
-  #[why] per-root l0..l3 pyramids, then merged across roots. keys stay fully path-qualified so konradodwrot/* and restricted/* never collide and every state address is preserved.
   per_root = {
     for rk, tree in local.active_trees : rk => {
       l0_raw = {
@@ -109,7 +107,6 @@ locals {
     }
   ]
 
-  #[why] mirror the github repos for every project that is push-mirrored (konradodwrot tree only, when active).
   github_repos = merge([
     for lvl in local.levels : {
       for k, p in lvl.projects : p.path => {
@@ -168,13 +165,8 @@ module "ci_cluster" {
   gcp_billing_account = var.gcp_billing_account
   gcp_ci_member       = var.gcp_ci_member
   gitlab_group_id     = module.gitlab.group_ids[var.trees["konradodwrot"].path]
-  #[why] the same address the budget alerts go to: one place owns where infrastructure mail lands
   quota_contact_email = var.budget_alert_email
 
-  #[why] the quota preference this module creates is checked against the provider's quota project, so
-  #   it needs modules/gcp's cloudquotas service enabled first. nothing here references that resource,
-  #   so without this edge terraform is free to run them concurrently and fail on "api has not been
-  #   used in project"
   depends_on = [module.gcp]
 }
 

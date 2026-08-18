@@ -1,5 +1,4 @@
 ##[>] 🤖🤖
-#[why] group-level, not project-level: the tag job's multi-project trigger into control runs as this token's bot, and a project bot cannot reach another project (GitLab rejects cross-project membership). A group bot is a member of every project in the group, so the bridge authorizes
 resource "gitlab_group_access_token" "prose_tagger" {
   group        = module.l0.group_ids[var.token_group_path]
   name         = "prose-tag-minter"

@@ -3,7 +3,6 @@ data "onepassword_vault" "this" {
   name = var.op_vault
 }
 
-#[why] terraform lands the fresh SA key in the vault on apply, replacing the manual `op item edit` step; read by the host as op://<vault>/sandbox-gcp-sa/sa_key
 resource "onepassword_item" "sandbox_sa_key" {
   vault    = data.onepassword_vault.this.uuid
   title    = "sandbox-gcp-sa"

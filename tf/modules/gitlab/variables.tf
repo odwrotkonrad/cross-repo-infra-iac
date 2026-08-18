@@ -79,7 +79,6 @@ variable "github_token" {
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖
-#[why] "true" runs the macOS jobs; anything else skips them (they cost SaaS minutes and cannot move to the Linux CI cluster)
 variable "enable_darwin_ci" {
   type    = string
   default = "false"

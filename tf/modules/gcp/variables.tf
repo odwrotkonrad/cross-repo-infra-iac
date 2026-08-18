@@ -20,7 +20,6 @@ variable "gcp_billing_account" {
   sensitive = true
 }
 
-#[why] budget amount as a whole-currency string; thresholds are fractions of it, so raising this moves warn and critical together
 variable "budget_amount" {
   type    = string
   default = "100"
