@@ -114,6 +114,11 @@ variable "token_expires_at" {
   type = string
 }
 
+#[why] repos whose CI mints semver tags, so consumers can pin a version: each gets a masked TAG_TOKEN
+variable "tagging_projects" {
+  type = list(string)
+}
+
 variable "ci_gitlab_token" {
   type      = string
   sensitive = true

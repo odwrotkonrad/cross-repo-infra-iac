@@ -55,6 +55,11 @@ variable "token_expires_at" {
   type = string
 }
 
+#[why] repo paths under token_group_path whose CI mints semver tags: each gets a masked TAG_TOKEN
+variable "tagging_projects" {
+  type = list(string)
+}
+
 variable "ci_gitlab_token" {
   type      = string
   sensitive = true
