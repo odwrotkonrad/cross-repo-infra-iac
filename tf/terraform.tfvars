@@ -9,7 +9,7 @@ local_runner_id = 53786471
 #   variable. Declared here rather than in a consumer's tree: a pin inside che/ matched
 #   release-che's `changes:` rule and cut a che release for a catalog-only change. control's
 #   fan-out raises this line when che-packages publishes
-che_packages_ref = "0.0.13"
+che_packages_ref = "0.0.15"
 
 trees = {
   konradodwrot = {
