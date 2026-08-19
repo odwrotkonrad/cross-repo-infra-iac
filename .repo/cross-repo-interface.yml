@@ -6,6 +6,9 @@ upstream:
   - prose/license
   - configs/llm/claude
   - infra/oci-images/ci-linux
+  #[why] this repo owns the CHE_PACKAGES_REF group CI variable every consumer's CI pins to: a
+  #   catalog release has to reach that value, which is what makes this an upstream edge
+  - che-packages/catalog
 downstream:
   - {name: tf-lock, type: lockfile}
 ##[<] 🤖🤖
