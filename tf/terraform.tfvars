@@ -2,6 +2,10 @@
 token_expires_at    = "2026-10-12"
 manage_konradodwrot = true
 
+#[why] prose already minted through its own token; the rest gain tags so their che includes and
+#   template refs can be pinned to a version instead of tracking main
+tagging_projects = ["prose", "configs", "control", "notes", "resume-md-pdf"]
+
 github_owner    = "odwrotkonrad"
 local_runner_id = 53786471
 

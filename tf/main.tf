@@ -177,6 +177,7 @@ module "gitlab" {
   iac_project_path = "${var.trees["konradodwrot"].path}/infra/iac"
   token_group_path = var.trees["konradodwrot"].path
   token_expires_at = var.token_expires_at
+  tagging_projects = var.tagging_projects
   ci_gitlab_token  = var.ci_gitlab_token
   enable_darwin_ci = var.enable_darwin_ci
   che_packages_ref = var.che_packages_ref
