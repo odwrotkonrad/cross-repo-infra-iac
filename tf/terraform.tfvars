@@ -5,6 +5,12 @@ manage_konradodwrot = true
 github_owner    = "odwrotkonrad"
 local_runner_id = 53786471
 
+#[why] the catalog version every repo's CI pins to, published as the CHE_PACKAGES_REF group
+#   variable. Declared here rather than in a consumer's tree: a pin inside che/ matched
+#   release-che's `changes:` rule and cut a che release for a catalog-only change. control's
+#   fan-out raises this line when che-packages publishes
+che_packages_ref = "0.0.13"
+
 trees = {
   konradodwrot = {
     name        = "konradodwrot"
