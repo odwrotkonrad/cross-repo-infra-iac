@@ -49,7 +49,7 @@ resource "onepassword_item" "apt_signing" {
 
 resource "gitlab_project_variable" "apt_gpg_private_key" {
   project       = var.go_modules_project_path
-  key           = "APT_GPG_PRIVATE_KEY"
+  key           = "REPO_VAR_APT_GPG_PRIVATE_KEY"
   value         = gpg_private_key.apt_signing.private_key
   variable_type = "file"
   protected     = true
@@ -58,7 +58,7 @@ resource "gitlab_project_variable" "apt_gpg_private_key" {
 
 resource "gitlab_project_variable" "apt_gpg_passphrase" {
   project   = var.go_modules_project_path
-  key       = "APT_GPG_PASSPHRASE"
+  key       = "REPO_VAR_APT_GPG_PASSPHRASE"
   value     = random_password.passphrase.result
   masked    = true
   protected = true

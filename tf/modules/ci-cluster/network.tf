@@ -6,11 +6,12 @@ resource "google_compute_network" "ci" {
 }
 
 resource "google_compute_subnetwork" "ci" {
-  project       = google_project_service.compute.project
-  name          = var.cluster_name
-  region        = var.region
-  network       = google_compute_network.ci.id
-  ip_cidr_range = "10.0.0.0/20"
+  project                  = google_project_service.compute.project
+  name                     = var.cluster_name
+  region                   = var.region
+  network                  = google_compute_network.ci.id
+  ip_cidr_range            = "10.0.0.0/20"
+  private_ip_google_access = true
 
   secondary_ip_range {
     range_name    = "pods"

@@ -23,6 +23,18 @@ output "cluster_endpoint" {
   value = "https://${google_container_cluster.ci.endpoint}"
 }
 
+output "ci_registry" {
+  value = local.ci_registry
+}
+
+output "gitlab_registry_proxy" {
+  value = local.gitlab_registry_proxy
+}
+
+output "dockerhub_registry_proxy" {
+  value = local.dockerhub_registry_proxy
+}
+
 output "cluster_ca_certificate" {
   value     = google_container_cluster.ci.master_auth[0].cluster_ca_certificate
   sensitive = true

@@ -11,4 +11,9 @@ upstream:
   - che-packages/catalog
 downstream:
   - {name: tf-lock, type: lockfile}
+  - {name: ci-var/artifact-registry, type: ci-variable}
+  - {name: ci-var/ci-images-ref, type: ci-variable}
+  - {name: ci-var/che-packages-ref, type: ci-variable}
+  - {name: ci-var/che-backup-auto-create, type: ci-variable}
+  - {name: ci-var/enable-darwin-ci, type: ci-variable}
 ##[<] 🤖🤖

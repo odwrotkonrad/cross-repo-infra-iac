@@ -9,14 +9,14 @@ resource "gitlab_project_access_token" "homebrew_tap" {
 
 resource "gitlab_project_variable" "homebrew_tap_project_id" {
   project   = module.l0.project_ids["${var.token_group_path}/go-modules"]
-  key       = "HOMEBREW_TAP_PROJECT_ID"
+  key       = "REPO_VAR_HOMEBREW_TAP_PROJECT_ID"
   value     = module.l0.project_ids["${var.token_group_path}/homebrew-tap"]
   protected = true
 }
 
 resource "gitlab_project_variable" "homebrew_tap_token" {
   project   = module.l0.project_ids["${var.token_group_path}/go-modules"]
-  key       = "HOMEBREW_TAP_TOKEN"
+  key       = "REPO_VAR_HOMEBREW_TAP_TOKEN"
   value     = gitlab_project_access_token.homebrew_tap.token
   masked    = true
   protected = true

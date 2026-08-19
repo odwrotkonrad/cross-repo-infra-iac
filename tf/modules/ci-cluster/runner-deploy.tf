@@ -31,8 +31,9 @@ locals {
             BucketName = "${google_storage_bucket.runner_cache.name}"
         [runners.kubernetes]
           namespace = "${var.runner_namespace}"
-          image = "${var.runner_default_image}"
-          helper_image = "registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:${local.helper_image_arch[v.arch]}-v${var.runner_helper_version}"
+          service_account = "${var.job_service_account}"
+          image = "${local.ci_registry}/ci-linux:${var.ci_images_ref}"
+          helper_image = "${local.gitlab_registry_proxy}/gitlab-org/gitlab-runner/gitlab-runner-helper:${local.helper_image_arch[v.arch]}-v${var.runner_helper_version}"
           privileged = true
           poll_timeout = ${var.runner_poll_timeout}
           pull_policy = ["if-not-present"]
@@ -102,6 +103,8 @@ resource "helm_release" "runner" {
   depends_on = [
     kubernetes_namespace_v1.runner,
     google_service_account_iam_member.runner_workload_identity,
+    kubernetes_service_account_v1.ci_job,
+    google_service_account_iam_member.ci_job_workload_identity,
   ]
 }
 ##[<] 🤖🤖

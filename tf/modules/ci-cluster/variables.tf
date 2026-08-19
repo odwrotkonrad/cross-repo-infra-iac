@@ -89,6 +89,16 @@ variable "runner_service_account" {
   default = "gitlab-runner"
 }
 
+variable "job_service_account" {
+  type    = string
+  default = "ci-job"
+}
+
+variable "registry_cache_retention_days" {
+  type    = number
+  default = 14
+}
+
 variable "gitlab_url" {
   type    = string
   default = "https://gitlab.com/"
@@ -104,9 +114,9 @@ variable "runner_helper_version" {
   default = "19.2.2"
 }
 
-variable "runner_default_image" {
+variable "ci_images_ref" {
   type    = string
-  default = "registry.gitlab.com/konradodwrot/infra/oci-images/ci-linux:latest"
+  default = "latest"
 }
 
 variable "runner_concurrent" {
