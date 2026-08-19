@@ -15,6 +15,8 @@ local_runner_id = 53786471
 #   fan-out raises this line when che-packages publishes
 che_packages_ref = "0.0.16"
 
+ci_images_ref = "latest"
+
 trees = {
   konradodwrot = {
     name        = "konradodwrot"

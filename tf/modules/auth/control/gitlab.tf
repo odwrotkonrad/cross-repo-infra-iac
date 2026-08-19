@@ -9,7 +9,7 @@ resource "gitlab_group_access_token" "control" {
 
 resource "gitlab_project_variable" "control_gitlab_token" {
   project   = var.control_project_path
-  key       = "CONTROL_GITLAB_TOKEN"
+  key       = "REPO_VAR_CONTROL_GITLAB_TOKEN"
   value     = gitlab_group_access_token.control.token
   masked    = true
   protected = true

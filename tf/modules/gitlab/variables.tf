@@ -96,3 +96,28 @@ variable "che_packages_ref" {
   default = ""
 }
 ##[<] 🤖🤖
+
+##[>] 🤖🤖
+variable "che_backup_auto_create" {
+  type    = string
+  default = "false"
+}
+##[<] 🤖🤖
+
+##[>] 🤖🤖
+variable "ci_images_ref" {
+  type = string
+}
+
+variable "ci_registry" {
+  type = string
+}
+
+variable "gitlab_registry_proxy" {
+  type = string
+}
+
+variable "dockerhub_registry_proxy" {
+  type = string
+}
+##[<] 🤖🤖

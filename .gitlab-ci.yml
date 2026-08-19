@@ -9,12 +9,15 @@ stages:
   - apply
 
 variables:
-  CI_IMAGE: registry.gitlab.com/konradodwrot/infra/oci-images/ci-linux:latest
+  CI_IMAGE: $GRP_VAR_ARTIFACT_REGISTRY/ci-linux:$GRP_VAR_CI_IMAGES_REF
   TF_IN_AUTOMATION: "true"
-  GITLAB_TOKEN: $TF_GITLAB_TOKEN
-  TF_VAR_github_token: $GITHUB_TOKEN
-  TF_VAR_ci_gitlab_token: $TF_GITLAB_TOKEN
-  TF_VAR_ci_google_credentials: $GOOGLE_CREDENTIALS
+  GITLAB_TOKEN: $REPO_VAR_GITLAB_TOKEN
+  TF_VAR_github_token: $REPO_VAR_GITHUB_TOKEN
+  TF_VAR_ci_gitlab_token: $REPO_VAR_GITLAB_TOKEN
+  TF_VAR_ci_google_credentials: $REPO_VAR_GOOGLE_CREDENTIALS
+  TF_VAR_op_service_account_token: $REPO_VAR_OP_SERVICE_ACCOUNT_TOKEN
+  TF_VAR_gcp_billing_account: $REPO_VAR_GCP_BILLING_ACCOUNT
+  GOOGLE_CREDENTIALS: $REPO_VAR_GOOGLE_CREDENTIALS
   GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp-sa-key.json
 
 default:

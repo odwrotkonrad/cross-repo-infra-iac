@@ -20,6 +20,11 @@ resource "google_project_service" "compute" {
   service = "compute.googleapis.com"
 }
 
+resource "google_project_service" "artifactregistry" {
+  project = google_project.ci.project_id
+  service = "artifactregistry.googleapis.com"
+}
+
 
 resource "google_project_iam_member" "ci_applier" {
   for_each = toset([
@@ -31,6 +36,7 @@ resource "google_project_iam_member" "ci_applier" {
     "roles/serviceusage.serviceUsageAdmin",
     "roles/storage.admin",
     "roles/cloudquotas.admin",
+    "roles/artifactregistry.admin",
   ])
 
   project = google_project.ci.project_id

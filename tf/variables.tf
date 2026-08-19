@@ -148,6 +148,24 @@ variable "che_packages_ref" {
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖
+#[what] the value CI jobs assign to che's CHE_BACKUP_AUTO_CREATE when they opt out of archiving
+#[why] false: every job remapping this runs che against a container or host thrown away with the
+#   pipeline, where an archive protects nothing. only jobs that name it read it, so che's own
+#   suites, which assert archiving happens, never see it
+variable "che_backup_auto_create" {
+  type    = string
+  default = "false"
+}
+##[<] 🤖🤖
+
+##[>] 🤖🤖
+variable "ci_images_ref" {
+  type    = string
+  default = "latest"
+}
+##[<] 🤖🤖
+
+##[>] 🤖🤖
 variable "budget_amount" {
   type    = string
   default = "100"
