@@ -17,9 +17,12 @@ repo-prepare-dev-env: render-templates repo-prepare-deps repo-ci-prepare-hooks
 
 #[why] the repo declares terraform in its devEnv profile, so no host or image has to carry it in advance
 #[what] install this repo's toolchain, then initialise the backend and providers
+#[why] providers only, never `init` proper: initialising the backend dials the GCS state bucket and
+#   needs credentials no fresh checkout or image build has. preparing an environment installs tools,
+#   it does not reach for state
 repo-prepare-deps:
 	@che run --profiles=devEnv
-	@$(MAKE) init
+	@cd tf && terraform init -input=false -backend=false >/dev/null
 ##[<] Dev Environment
 
 ##[>] Docs [genai-include]
