@@ -84,3 +84,10 @@ variable "enable_darwin_ci" {
   default = "false"
 }
 ##[<] 🤖🤖
+
+##[>] 🤖🤖
+variable "che_packages_ref" {
+  type    = string
+  default = ""
+}
+##[<] 🤖🤖

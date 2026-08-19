@@ -133,6 +133,16 @@ variable "enable_darwin_ci" {
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖
+#[what] the published che-packages catalog version every repo's CI pins to
+#[why] empty means unset, which floats to latest: a local run wants current definitions, and only
+#   CI, where this lands as CHE_PACKAGES_REF, needs an exactly reproducible one
+variable "che_packages_ref" {
+  type    = string
+  default = ""
+}
+##[<] 🤖🤖
+
+##[>] 🤖🤖
 variable "budget_amount" {
   type    = string
   default = "100"

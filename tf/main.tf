@@ -179,6 +179,7 @@ module "gitlab" {
   token_expires_at = var.token_expires_at
   ci_gitlab_token  = var.ci_gitlab_token
   enable_darwin_ci = var.enable_darwin_ci
+  che_packages_ref = var.che_packages_ref
 
   ci_op_service_account_token = var.op_service_account_token
   ci_gcp_billing_account      = var.gcp_billing_account
