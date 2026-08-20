@@ -5,7 +5,7 @@ SHELL := zsh
 TF ?= terraform
 
 WRAPPERS := repo-prepare-dev-env 
-COMMANDS := render-templates repo-prepare-deps repo-ci-prepare-hooks repo-ci-precommit-all init fmt validate lock plan apply
+COMMANDS := render-templates repo-render-env repo-prepare-deps repo-ci-prepare-hooks repo-ci-precommit-all init fmt validate lock plan apply
 
 .PHONY: $(WRAPPERS) $(COMMANDS)
 
@@ -13,7 +13,7 @@ COMMANDS := render-templates repo-prepare-deps repo-ci-prepare-hooks repo-ci-pre
 #[why] render precedes hooks: the docsgen pre-commit hook runs render-templates and fails on drift,
 #   so a fresh clone whose generated files were never rendered would fail its first commit
 #[what] make a fresh clone a working checkout: generated docs, dependencies, git hooks
-repo-prepare-dev-env: render-templates repo-prepare-deps repo-ci-prepare-hooks
+repo-prepare-dev-env: repo-render-env render-templates repo-prepare-deps repo-ci-prepare-hooks
 
 #[why] the repo declares terraform in its devEnv profile, so no host or image has to carry it in advance
 #[what] install this repo's toolchain, then initialise the backend and providers
@@ -26,9 +26,13 @@ repo-prepare-deps:
 ##[<] Dev Environment
 
 ##[>] Docs [genai-include]
-#[what] render *.ontoRepo.tpl onto the repo (.env, makefile.agents.md, repo-structure.md, CLAUDE.md, AGENTS.md, README.md)
+#[what] render *.ontoRepo.tpl onto the repo (makefile.agents.md, repo-structure.md, CLAUDE.md, AGENTS.md, README.md)
 render-templates:
 	@che render-templates --profiles=ontoRepo
+
+#[what] render .env.tpl to .env: upstream refs and CI variables via glab, secrets via op
+repo-render-env:
+	@CHE_ENV_UNSET=empty che render-templates --profiles=envSeed
 ##[<] Docs
 
 ##[>] CI [genai-include]

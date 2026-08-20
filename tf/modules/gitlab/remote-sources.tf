@@ -14,7 +14,7 @@ resource "gitlab_group_access_token" "remote_sources" {
 #   from prose needs it, and the token can only read
 resource "gitlab_group_variable" "gitlab_token" {
   group     = var.token_group_path
-  key       = "GRP_VAR_GITLAB_TOKEN"
+  key       = "GRP_KO_VAR_GITLAB_TOKEN"
   value     = gitlab_group_access_token.remote_sources.token
   masked    = true
   protected = false

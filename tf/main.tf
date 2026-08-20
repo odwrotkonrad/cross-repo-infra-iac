@@ -182,6 +182,7 @@ module "gitlab" {
   ci_gitlab_token  = var.ci_gitlab_token
   enable_darwin_ci = var.enable_darwin_ci
   che_packages_ref = var.che_packages_ref
+  prose_ref        = var.prose_ref
 
   che_backup_auto_create   = var.che_backup_auto_create
   ci_images_ref            = var.ci_images_ref

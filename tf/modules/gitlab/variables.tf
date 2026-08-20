@@ -121,3 +121,9 @@ variable "dockerhub_registry_proxy" {
   type = string
 }
 ##[<] 🤖🤖
+
+##[>] 🤖🤖🤖
+variable "prose_ref" {
+  type = string
+}
+##[<] 🤖🤖🤖
