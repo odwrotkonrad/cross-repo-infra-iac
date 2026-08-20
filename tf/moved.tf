@@ -190,11 +190,6 @@ moved {
 }
 
 moved {
-  from = module.gitlab.gitlab_group_variable.prose_ref
-  to   = module.gitlab.gitlab_group_variable.prose_ref_legacy
-}
-
-moved {
   from = module.github.github_repository.this["sandbox"]
   to   = module.github.github_repository.this["ai-sandbox"]
 }
