@@ -14,6 +14,9 @@ local_runner_id = 53786471
 #   release-che's `changes:` rule and cut a che release for a catalog-only change. control's
 #   fan-out raises this line when che-packages publishes
 che_packages_ref = "0.0.16"
+##[>] 🤖🤖🤖
+prose_ref = "v0.0.34"
+##[<] 🤖🤖🤖
 
 ci_images_ref = "v0.0.92"
 

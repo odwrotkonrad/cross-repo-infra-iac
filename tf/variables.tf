@@ -190,3 +190,9 @@ variable "ci_project_name" {
   default = "staging"
 }
 ##[<] 🤖🤖
+
+##[>] 🤖🤖🤖
+variable "prose_ref" {
+  type = string
+}
+##[<] 🤖🤖🤖
