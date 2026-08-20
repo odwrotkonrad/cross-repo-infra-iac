@@ -1,6 +1,6 @@
 ##[>] 🤖🤖
 resource "gitlab_project_access_token" "homebrew_tap" {
-  project      = module.l0.project_ids["${var.token_group_path}/homebrew-tap"]
+  project      = local.project_ids["${var.token_group_path}/homebrew-tap"]
   name         = "go-modules-brew-publisher"
   scopes       = ["api"]
   access_level = "maintainer"
@@ -8,14 +8,14 @@ resource "gitlab_project_access_token" "homebrew_tap" {
 }
 
 resource "gitlab_project_variable" "homebrew_tap_project_id" {
-  project   = module.l0.project_ids["${var.token_group_path}/go-modules"]
+  project   = local.project_ids["${var.token_group_path}/go-modules"]
   key       = "REPO_VAR_HOMEBREW_TAP_PROJECT_ID"
-  value     = module.l0.project_ids["${var.token_group_path}/homebrew-tap"]
+  value     = local.project_ids["${var.token_group_path}/homebrew-tap"]
   protected = true
 }
 
 resource "gitlab_project_variable" "homebrew_tap_token" {
-  project   = module.l0.project_ids["${var.token_group_path}/go-modules"]
+  project   = local.project_ids["${var.token_group_path}/go-modules"]
   key       = "REPO_VAR_HOMEBREW_TAP_TOKEN"
   value     = gitlab_project_access_token.homebrew_tap.token
   masked    = true

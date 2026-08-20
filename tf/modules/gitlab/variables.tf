@@ -24,6 +24,7 @@ variable "levels" {
       ci_pipeline_variables_role = optional(string)
       protect_all_branches       = optional(bool, false)
       job_token_allowlist        = optional(set(string), [])
+      github_repo                = string
     }))
   }))
 }
@@ -123,7 +124,15 @@ variable "dockerhub_registry_proxy" {
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖🤖
-variable "prose_ref" {
+variable "prose_assets_ref" {
+  type = string
+}
+
+variable "prose_spec_ref" {
+  type = string
+}
+
+variable "misc_ref" {
   type = string
 }
 ##[<] 🤖🤖🤖

@@ -2,20 +2,24 @@
 token_expires_at    = "2026-10-12"
 manage_konradodwrot = true
 
-#[why] prose already minted through its own token; the rest gain tags so their che includes and
-#   template refs can be pinned to a version instead of tracking main
-tagging_projects = ["prose", "configs", "control", "notes", "resume-md-pdf"]
+tagging_projects = [
+  "cross-repo/prose/assets",
+  "cross-repo/prose/spec",
+  "cross-repo/misc",
+  "cross-repo/automation",
+  "configs",
+  "notes",
+  "resume-md-pdf",
+]
 
 github_owner    = "odwrotkonrad"
 local_runner_id = 53786471
 
-#[why] the catalog version every repo's CI pins to, published as the CHE_PACKAGES_REF group
-#   variable. Declared here rather than in a consumer's tree: a pin inside che/ matched
-#   release-che's `changes:` rule and cut a che release for a catalog-only change. control's
-#   fan-out raises this line when che-packages publishes
 che_packages_ref = "0.0.16"
 ##[>] 🤖🤖🤖
-prose_ref = "v0.0.34"
+prose_assets_ref = "v0.0.37"
+prose_spec_ref   = "v0.0.1"
+misc_ref         = "v0.0.1"
 ##[<] 🤖🤖🤖
 
 ci_images_ref = "v0.0.94"
@@ -33,23 +37,6 @@ trees = {
     }
 
     projects = {
-      prose = {
-        name              = "prose"
-        path              = "prose"
-        description       = "Centralized prose: conventions, purpose docs, README sources, specs, shared doc templates."
-        topics            = ["prose", "documentation", "conventions", "specs", "templates"]
-        push_access_level = "maintainer"
-      }
-      control = {
-        name              = "control"
-        path              = "control"
-        description       = "Cross-repo automation: prose propagation, dependency graph, regen MRs, local sync."
-        topics            = ["automation", "ci", "dependency-graph", "gitlab"]
-        push_access_level = "maintainer"
-
-        ci_pipeline_variables_role = "maintainer"
-        job_token_allowlist        = ["prose"]
-      }
       configs = {
         name             = "configs"
         path             = "configs"
@@ -91,13 +78,19 @@ trees = {
         description = "che's package catalog: packages.yml plus install scripts, published as a versioned definitions tarball. Every package's every install method proven by a pytest suite in containers."
         topics      = ["packages", "che", "catalog", "pytest", "installers"]
       }
+      ai_sandbox = {
+        name        = "ai-sandbox"
+        path        = "ai-sandbox"
+        description = "Local claude session sandbox: kind cluster plus per-session pods running the published config-baked sandbox image."
+        topics      = ["sandbox", "kubernetes", "kind", "docker", "claude"]
+      }
     }
 
     groups = {
-      infra = {
-        name        = "infra"
-        path        = "infra"
-        description = "Infrastructure as code."
+      cross_repo = {
+        name        = "cross-repo"
+        path        = "cross-repo"
+        description = "Shared, cross-repo material: automation, prose, CI scripts, infra."
 
         defaults = {
           public_jobs      = false
@@ -106,26 +99,82 @@ trees = {
         }
 
         projects = {
-          ci_images = {
-            name                       = "oci-images"
-            path                       = "oci-images"
-            description                = "Shared OCI container images: multi-arch ci-linux CI base, dev-sandbox config-baked dev image."
-            topics                     = ["ci", "docker", "container", "gitlab", "toolchain"]
-            enable_local_runner        = true
+          automation = {
+            name              = "automation"
+            path              = "automation"
+            description       = "Cross-repo automation: prose propagation, dependency graph, regen MRs, local sync."
+            topics            = ["automation", "ci", "dependency-graph", "gitlab"]
+            push_access_level = "maintainer"
+
             ci_pipeline_variables_role = "maintainer"
+            job_token_allowlist = [
+              "cross-repo/prose/assets",
+              "cross-repo/prose/spec",
+              "cross-repo/misc",
+              "cross-repo/infra/oci-images",
+              "che-packages",
+            ]
           }
-          sandbox = {
-            name        = "sandbox"
-            path        = "sandbox"
-            description = "Local claude session sandbox: kind cluster plus per-session pods running the published config-baked sandbox image."
-            topics      = ["sandbox", "kubernetes", "kind", "docker", "claude"]
+          misc = {
+            name              = "misc"
+            path              = "misc"
+            description       = "Shared CI scripts and templates rendered into every workspace repo at a pinned version."
+            topics            = ["ci", "scripts", "shared", "zsh"]
+            push_access_level = "maintainer"
           }
-          iac = {
-            name                 = "iac"
-            path                 = "iac"
-            description          = "The konradodwrot group tree and the identities it holds, as Terraform."
-            topics               = ["terraform", "infrastructure", "gitlab", "gcp", "iac", "secrets"]
-            protect_all_branches = true
+        }
+
+        groups = {
+          prose = {
+            name        = "prose"
+            path        = "prose"
+            description = "Workspace prose: rendered assets and the spec."
+
+            projects = {
+              assets = {
+                name              = "assets"
+                path              = "assets"
+                description       = "Rendered prose: purpose docs, README sources, AI payloads, shared fragments, license, doc templates."
+                topics            = ["prose", "documentation", "templates"]
+                push_access_level = "maintainer"
+              }
+              spec = {
+                name              = "spec"
+                path              = "spec"
+                description       = "Conventions with runnable examples and every repo's behavior specs."
+                topics            = ["prose", "conventions", "specs"]
+                push_access_level = "maintainer"
+              }
+            }
+          }
+          infra = {
+            name        = "infra"
+            path        = "infra"
+            description = "Infrastructure as code."
+
+            defaults = {
+              public_jobs      = false
+              protection_level = "maintainer"
+              github_mirror    = true
+            }
+
+            projects = {
+              ci_images = {
+                name                       = "oci-images"
+                path                       = "oci-images"
+                description                = "Shared OCI container images: multi-arch ci-linux CI base, dev-sandbox config-baked dev image."
+                topics                     = ["ci", "docker", "container", "gitlab", "toolchain"]
+                enable_local_runner        = true
+                ci_pipeline_variables_role = "maintainer"
+              }
+              iac = {
+                name                 = "iac"
+                path                 = "iac"
+                description          = "The konradodwrot group tree and the identities it holds, as Terraform."
+                topics               = ["terraform", "infrastructure", "gitlab", "gcp", "iac", "secrets"]
+                protect_all_branches = true
+              }
+            }
           }
         }
       }

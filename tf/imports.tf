@@ -1,20 +1,5 @@
 ##[>] 🤖🤖
 import {
-  to = module.gitlab.gitlab_project_variable.ci_gitlab_token
-  id = "konradodwrot/infra/iac:TF_GITLAB_TOKEN:*"
-}
-
-import {
-  to = module.gitlab.gitlab_project_variable.ci_github_token
-  id = "konradodwrot/infra/iac:GITHUB_TOKEN:*"
-}
-
-import {
-  to = module.gitlab.gitlab_project_variable.google_credentials
-  id = "konradodwrot/infra/iac:GOOGLE_CREDENTIALS:*"
-}
-
-import {
   to = module.ci_cluster.google_project.ci
   id = "projects/staging-499418"
 }
