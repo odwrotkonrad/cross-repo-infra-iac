@@ -18,7 +18,7 @@ che_packages_ref = "0.0.16"
 prose_ref = "v0.0.34"
 ##[<] 🤖🤖🤖
 
-ci_images_ref = "v0.0.92"
+ci_images_ref = "v0.0.93"
 
 trees = {
   konradodwrot = {
