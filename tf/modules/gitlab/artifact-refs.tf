@@ -26,7 +26,7 @@ resource "gitlab_group_variable" "misc_ref" {
 resource "gitlab_group_variable" "prose_ref_legacy" {
   group     = var.token_group_path
   key       = "GRP_KO_VAR_PROSE_REF"
-  value     = var.prose_assets_ref
+  value     = "v0.0.38"
   masked    = false
   protected = false
 }
