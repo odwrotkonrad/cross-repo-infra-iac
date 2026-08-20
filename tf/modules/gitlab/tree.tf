@@ -41,4 +41,30 @@ module "l3" {
   github_owner    = var.github_owner
   github_token    = var.github_token
 }
+
+locals {
+  project_ids = merge(
+    module.l0.project_ids,
+    module.l1.project_ids,
+    module.l2.project_ids,
+    module.l3.project_ids,
+  )
+
+  job_token_edges = {
+    for e in flatten([
+      for lvl in var.levels : [
+        for k, p in lvl.projects : [
+          for t in p.job_token_allowlist : { project = k, target = t }
+        ]
+      ]
+    ]) : "${e.project}<-${e.target}" => e
+  }
+}
+
+resource "gitlab_project_job_token_scope" "this" {
+  for_each = local.job_token_edges
+
+  project           = local.project_ids[each.value.project]
+  target_project_id = local.project_ids[each.value.target]
+}
 ##[<] 🤖🤖

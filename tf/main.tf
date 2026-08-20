@@ -100,7 +100,8 @@ locals {
             pages_unique_domain        = try(p.pages_unique_domain, null)
             ci_pipeline_variables_role = try(p.ci_pipeline_variables_role, null)
             protect_all_branches       = try(p.protect_all_branches, false)
-            job_token_allowlist        = [for t in try(p.job_token_allowlist, []) : "${g.path}/${t}"]
+            job_token_allowlist        = [for t in try(p.job_token_allowlist, []) : "${split("/", g.path)[0]}/${t}"]
+            github_repo                = replace(trimprefix("${g.path}/${p.path}", "${split("/", g.path)[0]}/"), "/", "-")
           }
         }
       ]...)
@@ -109,7 +110,7 @@ locals {
 
   github_repos = merge([
     for lvl in local.levels : {
-      for k, p in lvl.projects : p.path => {
+      for k, p in lvl.projects : p.github_repo => {
         description = p.description
         topics      = p.topics
         visibility  = p.visibility
@@ -150,7 +151,7 @@ module "auth" {
   op_vault                = var.op_vault
   ci_member               = var.gcp_ci_member
   go_modules_project_path = "${var.trees["konradodwrot"].path}/go-modules"
-  control_project_path    = "${var.trees["konradodwrot"].path}/control"
+  control_project_path    = "${var.trees["konradodwrot"].path}/cross-repo/automation"
   apt_gpg_name            = var.apt_gpg_name
   apt_gpg_email           = var.apt_gpg_email
   user_ssh_keys           = var.user_ssh_keys
@@ -175,14 +176,16 @@ module "gitlab" {
   source = "./modules/gitlab"
 
   levels           = local.levels
-  iac_project_path = "${var.trees["konradodwrot"].path}/infra/iac"
+  iac_project_path = "${var.trees["konradodwrot"].path}/cross-repo/infra/iac"
   token_group_path = var.trees["konradodwrot"].path
   token_expires_at = var.token_expires_at
   tagging_projects = var.tagging_projects
   ci_gitlab_token  = var.ci_gitlab_token
   enable_darwin_ci = var.enable_darwin_ci
   che_packages_ref = var.che_packages_ref
-  prose_ref        = var.prose_ref
+  prose_assets_ref = var.prose_assets_ref
+  prose_spec_ref   = var.prose_spec_ref
+  misc_ref         = var.misc_ref
 
   che_backup_auto_create   = var.che_backup_auto_create
   ci_images_ref            = var.ci_images_ref

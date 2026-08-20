@@ -26,6 +26,7 @@ variable "projects" {
     ci_pipeline_variables_role = optional(string)
     protect_all_branches       = optional(bool, false)
     job_token_allowlist        = optional(set(string), [])
+    github_repo                = string
   }))
 }
 

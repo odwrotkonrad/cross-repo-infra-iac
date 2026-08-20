@@ -192,7 +192,15 @@ variable "ci_project_name" {
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖🤖
-variable "prose_ref" {
+variable "prose_assets_ref" {
+  type = string
+}
+
+variable "prose_spec_ref" {
+  type = string
+}
+
+variable "misc_ref" {
   type = string
 }
 ##[<] 🤖🤖🤖

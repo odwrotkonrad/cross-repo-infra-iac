@@ -15,7 +15,7 @@ resource "gitlab_group_access_token" "tagger" {
 resource "gitlab_project_variable" "tag_token" {
   for_each = toset(var.tagging_projects)
 
-  project   = module.l0.project_ids["${var.token_group_path}/${each.value}"]
+  project   = local.project_ids["${var.token_group_path}/${each.value}"]
   key       = "REPO_VAR_TAG_TOKEN"
   value     = gitlab_group_access_token.tagger.token
   masked    = true
