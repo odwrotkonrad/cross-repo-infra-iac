@@ -19,7 +19,7 @@ che_packages_ref = "0.0.16"
 ##[>] 🤖🤖🤖
 prose_assets_ref = "v0.0.44"
 prose_spec_ref   = "v0.0.10"
-misc_ref         = "v0.0.5"
+misc_ref         = "v0.0.6"
 ##[<] 🤖🤖🤖
 
 ci_images_ref = "v0.0.101"
