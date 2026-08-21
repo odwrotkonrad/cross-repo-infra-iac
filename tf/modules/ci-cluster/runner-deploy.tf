@@ -51,6 +51,7 @@ locals {
         [[runners.kubernetes.volumes.empty_dir]]
           name = "docker-certs"
           mount_path = "/certs"
+          mount_propagation = "None"
         [runners.kubernetes.node_selector]
           "ci-arch" = "${v.arch}"
         [runners.kubernetes.node_tolerations]
