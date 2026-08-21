@@ -50,6 +50,10 @@ validate-pre-commit-all:
     - gke-linux-amd64-small
   rules:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+  before_script:
+    - export PROSE_ASSETS_REF=$(sed -n 's/^prose_assets_ref *= *"\(.*\)"/\1/p' tf/terraform.tfvars)
+    - export PROSE_SPEC_REF=$(sed -n 's/^prose_spec_ref *= *"\(.*\)"/\1/p' tf/terraform.tfvars)
+    - export MISC_REF=$(sed -n 's/^misc_ref *= *"\(.*\)"/\1/p' tf/terraform.tfvars)
   script:
     - make repo-ci-precommit-all
     - git diff --exit-code HEAD
