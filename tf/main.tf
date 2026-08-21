@@ -192,6 +192,7 @@ module "gitlab" {
   ci_registry              = module.ci_cluster.ci_registry
   gitlab_registry_proxy    = module.ci_cluster.gitlab_registry_proxy
   dockerhub_registry_proxy = module.ci_cluster.dockerhub_registry_proxy
+  go_proxy                 = module.ci_cluster.go_proxy
 
   ci_op_service_account_token = var.op_service_account_token
   ci_gcp_billing_account      = var.gcp_billing_account

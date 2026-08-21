@@ -121,6 +121,10 @@ variable "gitlab_registry_proxy" {
 variable "dockerhub_registry_proxy" {
   type = string
 }
+
+variable "go_proxy" {
+  type = string
+}
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖🤖

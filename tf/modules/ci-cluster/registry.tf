@@ -5,11 +5,13 @@
 #   against public cloudflare space. the token fetch is anonymous, so no credential fixes it.
 #   pulling from here removes the public hop entirely
 locals {
-  registry_host = "${var.region}-docker.pkg.dev"
+  registry_host    = "${var.region}-docker.pkg.dev"
+  go_registry_host = "${var.region}-go.pkg.dev"
 
   ci_registry              = "${local.registry_host}/${google_project.ci.project_id}/${google_artifact_registry_repository.ci.repository_id}"
   gitlab_registry_proxy    = "${local.registry_host}/${google_project.ci.project_id}/${google_artifact_registry_repository.remote_gitlab.repository_id}"
   dockerhub_registry_proxy = "${local.registry_host}/${google_project.ci.project_id}/${google_artifact_registry_repository.remote_dockerhub.repository_id}"
+  go_proxy                 = "${local.go_registry_host}/${google_project.ci.project_id}/${google_artifact_registry_repository.remote_go.repository_id}"
 }
 
 #[what] our own images, pushed by infra/oci-images, plus the buildx layer cache beside them
@@ -75,6 +77,25 @@ resource "google_artifact_registry_repository" "remote_dockerhub" {
 
     docker_repository {
       public_repository = "DOCKER_HUB"
+    }
+  }
+
+  depends_on = [google_project_iam_member.ci_applier]
+}
+
+resource "google_artifact_registry_repository" "remote_go" {
+  project       = google_project_service.artifactregistry.project
+  location      = var.region
+  repository_id = "remote-go"
+  description   = "pull-through cache for proxy.golang.org"
+  format        = "GO"
+  mode          = "REMOTE_REPOSITORY"
+
+  remote_repository_config {
+    description = "proxy.golang.org"
+
+    common_repository {
+      uri = "https://proxy.golang.org/"
     }
   }
 
