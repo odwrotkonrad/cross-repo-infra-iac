@@ -69,7 +69,7 @@ plan:
   interruptible: false
   resource_group: terraform
   rules:
-    - if: $CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   script:
     - make plan
   artifacts:
@@ -80,13 +80,13 @@ plan:
 apply:
   extends: .tf-creds
   stage: apply
-  needs:
-    - plan
+  needs: []
   interruptible: false
   resource_group: terraform
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
+    - make plan
     - make apply
     - ci/changed-ci-vars.zsh automation-event.env
   artifacts:
