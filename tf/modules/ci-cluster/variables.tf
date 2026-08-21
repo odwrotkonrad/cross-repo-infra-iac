@@ -146,9 +146,9 @@ variable "job_sizes" {
     memory_limit   = string
   }))
   default = {
-    small  = { cpu_request = "500m", memory_request = "1Gi", memory_limit = "2Gi" }
-    medium = { cpu_request = "1000m", memory_request = "3Gi", memory_limit = "6Gi" }
-    big    = { cpu_request = "3", memory_request = "6Gi", memory_limit = "12Gi" }
+    small  = { cpu_request = "150m", memory_request = "384Mi", memory_limit = "1Gi" }
+    medium = { cpu_request = "750m", memory_request = "2Gi", memory_limit = "6Gi" }
+    big    = { cpu_request = "2500m", memory_request = "8Gi", memory_limit = "14Gi" }
   }
 }
 
