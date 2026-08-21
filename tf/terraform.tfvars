@@ -15,14 +15,6 @@ tagging_projects = [
 github_owner    = "odwrotkonrad"
 local_runner_id = 53786471
 
-CHE_PACKAGES_REF = "0.0.16"
-##[>] 🤖🤖🤖
-PROSE_ASSETS_REF = "v0.0.49"
-PROSE_SPEC_REF   = "v0.0.16"
-MISC_REF         = "v0.0.8"
-##[<] 🤖🤖🤖
-
-CI_IMAGES_REF = "v0.0.105"
 
 trees = {
   konradodwrot = {
@@ -50,6 +42,9 @@ trees = {
         description = "Shared space for user-agent cross-session collaboration: versioned markdown notes carrying context, decisions, plans, open threads across sessions and repos."
         visibility  = "private"
         topics      = ["notes", "collaboration", "agents"]
+        job_token_allowlist = [
+          "cross-repo/automation",
+        ]
       }
       resume_md_pdf = {
         name        = "resume-md-pdf"
