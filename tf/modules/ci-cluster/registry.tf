@@ -95,7 +95,7 @@ resource "google_artifact_registry_repository" "remote_go" {
     description = "proxy.golang.org"
 
     common_repository {
-      uri = "https://proxy.golang.org/"
+      uri = "https://proxy.golang.org"
     }
   }
 
