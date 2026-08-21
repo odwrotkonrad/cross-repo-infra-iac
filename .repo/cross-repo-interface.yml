@@ -1,17 +1,24 @@
 ##[>] 🤖🤖
 upstream:
-  - cross-repo/prose/assets/repo-prose
   - cross-repo/prose/spec/conventions-doc
-  - cross-repo/prose/assets/doc-templates
-  - cross-repo/prose/assets/license
   - configs/llm/claude
   - cross-repo/infra/oci-images/ci-linux
-  #[why] this repo owns the CHE_PACKAGES_REF group CI variable every consumer's CI pins to: a
-  #   catalog release has to reach that value, which is what makes this an upstream edge
-  - che-packages/catalog
+edges:
+  cross-repo/prose/assets/repo-prose: [ci-var/prose-assets-ref]
+  cross-repo/prose/assets/shared-prose: [ci-var/prose-assets-ref]
+  cross-repo/prose/assets/doc-templates: [ci-var/prose-assets-ref]
+  cross-repo/prose/assets/license: [ci-var/prose-assets-ref]
+  cross-repo/prose/spec/conventions-doc: [ci-var/prose-spec-ref]
+  cross-repo/prose/spec/repo-spec: [ci-var/prose-spec-ref]
+  cross-repo/misc/ci-scripts: [ci-var/misc-ref]
+  che-packages/catalog: [ci-var/che-packages-ref]
+  cross-repo/infra/oci-images/ci-linux: [ci-var/ci-images-ref]
 downstream:
   - {name: tf-lock, type: lockfile}
   - {name: ci-var/artifact-registry, type: ci-variable}
+  - {name: ci-var/prose-assets-ref, type: ci-variable}
+  - {name: ci-var/prose-spec-ref, type: ci-variable}
+  - {name: ci-var/misc-ref, type: ci-variable}
   - {name: ci-var/ci-images-ref, type: ci-variable}
   - {name: ci-var/che-packages-ref, type: ci-variable}
   - {name: ci-var/che-backup-auto-create, type: ci-variable}
