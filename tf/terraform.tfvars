@@ -15,14 +15,6 @@ tagging_projects = [
 github_owner    = "odwrotkonrad"
 local_runner_id = 53786471
 
-CHE_PACKAGES_REF = "0.0.16"
-##[>] 🤖🤖🤖
-PROSE_ASSETS_REF = "v0.0.49"
-PROSE_SPEC_REF   = "v0.0.16"
-MISC_REF         = "v0.0.8"
-##[<] 🤖🤖🤖
-
-CI_IMAGES_REF = "v0.0.105"
 
 trees = {
   konradodwrot = {
