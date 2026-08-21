@@ -47,7 +47,7 @@ variable "ci_node_pools" {
     fallback     = optional(bool, false)
   }))
   default = {
-    linux-amd64          = { arch = "amd64", machine_type = "e2-standard-4", disk_type = "pd-balanced" }
+    linux-amd64          = { arch = "amd64", machine_type = "c3d-standard-4", disk_type = "pd-balanced" }
     linux-arm64          = { arch = "arm64", machine_type = "c4a-standard-4", disk_type = "hyperdisk-balanced" }
     linux-amd64-fallback = { arch = "amd64", machine_type = "n2-standard-4", disk_type = "pd-balanced", fallback = true }
     linux-arm64-fallback = { arch = "arm64", machine_type = "t2a-standard-4", disk_type = "pd-balanced", fallback = true }
