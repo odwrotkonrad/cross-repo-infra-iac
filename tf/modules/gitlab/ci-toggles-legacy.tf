@@ -2,7 +2,7 @@
 resource "gitlab_group_variable" "enable_darwin_ci_legacy" {
   group     = var.token_group_path
   key       = "GRP_VAR_ENABLE_DARWIN_CI"
-  value     = var.enable_darwin_ci
+  value     = var.ENABLE_DARWIN_CI
   masked    = false
   protected = false
 }
@@ -10,7 +10,7 @@ resource "gitlab_group_variable" "enable_darwin_ci_legacy" {
 resource "gitlab_group_variable" "che_packages_ref_legacy" {
   group     = var.token_group_path
   key       = "GRP_VAR_CHE_PACKAGES_REF"
-  value     = var.che_packages_ref
+  value     = var.CHE_PACKAGES_REF
   masked    = false
   protected = false
 }
@@ -18,7 +18,7 @@ resource "gitlab_group_variable" "che_packages_ref_legacy" {
 resource "gitlab_group_variable" "che_backup_auto_create_legacy" {
   group     = var.token_group_path
   key       = "GRP_VAR_CHE_BACKUP_AUTO_CREATE"
-  value     = var.che_backup_auto_create
+  value     = var.CHE_BACKUP_AUTO_CREATE
   masked    = false
   protected = false
 }
@@ -26,7 +26,7 @@ resource "gitlab_group_variable" "che_backup_auto_create_legacy" {
 resource "gitlab_group_variable" "ci_images_ref_legacy" {
   group     = var.token_group_path
   key       = "GRP_VAR_CI_IMAGES_REF"
-  value     = var.ci_images_ref
+  value     = var.CI_IMAGES_REF
   masked    = false
   protected = false
 }

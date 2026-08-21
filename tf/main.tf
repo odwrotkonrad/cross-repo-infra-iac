@@ -167,7 +167,8 @@ module "ci_cluster" {
   gcp_ci_member       = var.gcp_ci_member
   gitlab_group_id     = module.gitlab.group_ids[var.trees["konradodwrot"].path]
   quota_contact_email = var.budget_alert_email
-  ci_images_ref       = var.ci_images_ref
+  ci_images_ref       = var.CI_IMAGES_REF
+
 
   depends_on = [module.gcp]
 }
@@ -181,14 +182,14 @@ module "gitlab" {
   token_expires_at = var.token_expires_at
   tagging_projects = var.tagging_projects
   ci_gitlab_token  = var.ci_gitlab_token
-  enable_darwin_ci = var.enable_darwin_ci
-  che_packages_ref = var.che_packages_ref
-  prose_assets_ref = var.prose_assets_ref
-  prose_spec_ref   = var.prose_spec_ref
-  misc_ref         = var.misc_ref
+  ENABLE_DARWIN_CI = var.ENABLE_DARWIN_CI
+  CHE_PACKAGES_REF = var.CHE_PACKAGES_REF
+  PROSE_ASSETS_REF = var.PROSE_ASSETS_REF
+  PROSE_SPEC_REF   = var.PROSE_SPEC_REF
+  MISC_REF         = var.MISC_REF
 
-  che_backup_auto_create   = var.che_backup_auto_create
-  ci_images_ref            = var.ci_images_ref
+  CHE_BACKUP_AUTO_CREATE   = var.CHE_BACKUP_AUTO_CREATE
+  CI_IMAGES_REF            = var.CI_IMAGES_REF
   ci_registry              = module.ci_cluster.ci_registry
   gitlab_registry_proxy    = module.ci_cluster.gitlab_registry_proxy
   dockerhub_registry_proxy = module.ci_cluster.dockerhub_registry_proxy
