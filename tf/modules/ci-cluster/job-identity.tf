@@ -36,6 +36,7 @@ resource "google_artifact_registry_repository_iam_member" "ci_job_reader" {
     ci               = google_artifact_registry_repository.ci.name
     remote-gitlab    = google_artifact_registry_repository.remote_gitlab.name
     remote-dockerhub = google_artifact_registry_repository.remote_dockerhub.name
+    remote-go        = google_artifact_registry_repository.remote_go.name
   }
 
   project    = google_project.ci.project_id

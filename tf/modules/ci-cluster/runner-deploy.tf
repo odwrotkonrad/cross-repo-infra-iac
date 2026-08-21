@@ -5,6 +5,8 @@ locals {
     arm64 = "arm64"
   }
 
+  go_proxy_pre_build = "_go_proxy=${local.go_proxy}\n${file("${path.module}/go-proxy-pre-build.sh")}"
+
   runner_globals = <<-TOML
     concurrent = ${var.runner_concurrent}
     check_interval = 3
@@ -24,6 +26,7 @@ locals {
         token = "${gitlab_user_runner.ci[key].token}"
         executor = "kubernetes"
         request_concurrency = 4
+        pre_build_script = ${jsonencode(local.go_proxy_pre_build)}
         [runners.cache]
           Type = "gcs"
           Shared = true

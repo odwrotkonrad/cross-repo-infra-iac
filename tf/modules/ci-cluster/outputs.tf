@@ -35,6 +35,10 @@ output "dockerhub_registry_proxy" {
   value = local.dockerhub_registry_proxy
 }
 
+output "go_proxy" {
+  value = local.go_proxy
+}
+
 output "cluster_ca_certificate" {
   value     = google_container_cluster.ci.master_auth[0].cluster_ca_certificate
   sensitive = true

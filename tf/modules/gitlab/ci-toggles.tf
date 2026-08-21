@@ -63,4 +63,12 @@ resource "gitlab_group_variable" "dockerhub_registry_proxy" {
   masked    = false
   protected = false
 }
+
+resource "gitlab_group_variable" "go_proxy" {
+  group     = var.token_group_path
+  key       = "GRP_KO_VAR_ARTIFACT_REGISTRY_PROXY_GO"
+  value     = var.go_proxy
+  masked    = false
+  protected = false
+}
 ##[<] 🤖🤖
