@@ -63,6 +63,7 @@ plan:
   stage: plan
   needs: []
   interruptible: false
+  resource_group: terraform
   rules:
     - if: $CI_COMMIT_BRANCH
   script:
@@ -78,6 +79,7 @@ apply:
   needs:
     - plan
   interruptible: false
+  resource_group: terraform
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:

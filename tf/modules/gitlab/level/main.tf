@@ -22,6 +22,8 @@ resource "gitlab_project" "this" {
   pages_access_level = "enabled"
   public_jobs        = each.value.public_jobs
 
+  container_registry_access_level = "disabled"
+
   auto_cancel_pending_pipelines = "enabled"
 
   ci_pipeline_variables_minimum_override_role = each.value.ci_pipeline_variables_role
