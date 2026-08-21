@@ -85,28 +85,28 @@ variable "github_token" {
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖
-variable "enable_darwin_ci" {
+variable "ENABLE_DARWIN_CI" {
   type    = string
   default = "false"
 }
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖
-variable "che_packages_ref" {
+variable "CHE_PACKAGES_REF" {
   type    = string
   default = ""
 }
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖
-variable "che_backup_auto_create" {
+variable "CHE_BACKUP_AUTO_CREATE" {
   type    = string
   default = "false"
 }
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖
-variable "ci_images_ref" {
+variable "CI_IMAGES_REF" {
   type = string
 }
 
@@ -128,15 +128,15 @@ variable "go_proxy" {
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖🤖
-variable "prose_assets_ref" {
+variable "PROSE_ASSETS_REF" {
   type = string
 }
 
-variable "prose_spec_ref" {
+variable "PROSE_SPEC_REF" {
   type = string
 }
 
-variable "misc_ref" {
+variable "MISC_REF" {
   type = string
 }
 ##[<] 🤖🤖🤖
