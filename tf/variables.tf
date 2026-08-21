@@ -131,7 +131,7 @@ variable "ci_google_credentials" {
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖
-variable "enable_darwin_ci" {
+variable "ENABLE_DARWIN_CI" {
   type    = string
   default = "false"
 }
@@ -141,7 +141,7 @@ variable "enable_darwin_ci" {
 #[what] the published che-packages catalog version every repo's CI pins to
 #[why] empty means unset, which floats to latest: a local run wants current definitions, and only
 #   CI, where this lands as CHE_PACKAGES_REF, needs an exactly reproducible one
-variable "che_packages_ref" {
+variable "CHE_PACKAGES_REF" {
   type    = string
   default = ""
 }
@@ -152,14 +152,14 @@ variable "che_packages_ref" {
 #[why] false: every job remapping this runs che against a container or host thrown away with the
 #   pipeline, where an archive protects nothing. only jobs that name it read it, so che's own
 #   suites, which assert archiving happens, never see it
-variable "che_backup_auto_create" {
+variable "CHE_BACKUP_AUTO_CREATE" {
   type    = string
   default = "false"
 }
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖
-variable "ci_images_ref" {
+variable "CI_IMAGES_REF" {
   type    = string
   default = "latest"
 }
@@ -192,15 +192,15 @@ variable "ci_project_name" {
 ##[<] 🤖🤖
 
 ##[>] 🤖🤖🤖
-variable "prose_assets_ref" {
+variable "PROSE_ASSETS_REF" {
   type = string
 }
 
-variable "prose_spec_ref" {
+variable "PROSE_SPEC_REF" {
   type = string
 }
 
-variable "misc_ref" {
+variable "MISC_REF" {
   type = string
 }
 ##[<] 🤖🤖🤖

@@ -1,4 +1,9 @@
 ##[>] 🤖🤖
+include:
+  - project: konradodwrot/cross-repo/misc
+    ref: $GRP_KO_VAR_MISC_REF
+    file: ci/templates/TriggerAutomation.gitlab-ci.yml
+
 workflow:
   rules:
     - if: $CI_COMMIT_BRANCH
@@ -7,6 +12,7 @@ stages:
   - validate
   - plan
   - apply
+  - trigger
 
 variables:
   ARTIFACT_REGISTRY: $GRP_KO_VAR_ARTIFACT_REGISTRY
@@ -49,9 +55,9 @@ validate-pre-commit-all:
   rules:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   before_script:
-    - export PROSE_ASSETS_REF=$(sed -n 's/^prose_assets_ref *= *"\(.*\)"/\1/p' tf/terraform.tfvars)
-    - export PROSE_SPEC_REF=$(sed -n 's/^prose_spec_ref *= *"\(.*\)"/\1/p' tf/terraform.tfvars)
-    - export MISC_REF=$(sed -n 's/^misc_ref *= *"\(.*\)"/\1/p' tf/terraform.tfvars)
+    - export PROSE_ASSETS_REF=$(sed -n 's/^PROSE_ASSETS_REF *= *"\(.*\)"/\1/p' tf/terraform.tfvars)
+    - export PROSE_SPEC_REF=$(sed -n 's/^PROSE_SPEC_REF *= *"\(.*\)"/\1/p' tf/terraform.tfvars)
+    - export MISC_REF=$(sed -n 's/^MISC_REF *= *"\(.*\)"/\1/p' tf/terraform.tfvars)
   script:
     - make repo-ci-precommit-all
     - git diff --exit-code HEAD
@@ -82,4 +88,16 @@ apply:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
     - make apply
+    - ci/changed-ci-vars.zsh automation-event.env
+  artifacts:
+    reports:
+      dotenv: automation-event.env
+
+trigger-automation:
+  extends: .TriggerAutomation
+  stage: trigger
+  needs:
+    - apply
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 ##[<] 🤖🤖
