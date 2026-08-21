@@ -50,8 +50,6 @@ validate-pre-commit-all:
     - gke-linux-amd64-small
   rules:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-  variables:
-    CHE_RENDER_TEMPLATES_SKIP_SECRETS: "true"
   script:
     - make repo-ci-precommit-all
     - git diff --exit-code HEAD
