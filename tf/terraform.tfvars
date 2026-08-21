@@ -18,7 +18,7 @@ local_runner_id = 53786471
 che_packages_ref = "0.0.16"
 ##[>] 🤖🤖🤖
 prose_assets_ref = "v0.0.44"
-prose_spec_ref   = "v0.0.10"
+prose_spec_ref   = "v0.0.11"
 misc_ref         = "v0.0.5"
 ##[<] 🤖🤖🤖
 
