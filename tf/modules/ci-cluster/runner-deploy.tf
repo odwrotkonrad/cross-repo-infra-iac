@@ -5,7 +5,9 @@ locals {
     arm64 = "arm64"
   }
 
-  go_proxy_pre_build = "_go_proxy=${local.go_proxy}\n${file("${path.module}/go-proxy-pre-build.sh")}"
+  go_proxy_pre_build       = "_go_proxy=${local.go_proxy}\n${file("${path.module}/go-proxy-pre-build.sh")}"
+  ar_docker_auth_pre_build = "_ar_host=${local.registry_host}\n${file("${path.module}/ar-docker-auth-pre-build.sh")}"
+  pre_build                = "${local.go_proxy_pre_build}\n${local.ar_docker_auth_pre_build}"
 
   runner_globals = <<-TOML
     concurrent = ${var.runner_concurrent}
@@ -26,7 +28,7 @@ locals {
         token = "${gitlab_user_runner.ci[key].token}"
         executor = "kubernetes"
         request_concurrency = 4
-        pre_build_script = ${jsonencode(local.go_proxy_pre_build)}
+        pre_build_script = ${jsonencode(local.pre_build)}
         [runners.cache]
           Type = "gcs"
           Shared = true
@@ -74,6 +76,11 @@ resource "helm_release" "runner" {
 
   values = [yamlencode({
     gitlabUrl = var.gitlab_url
+
+    image = {
+      registry = local.registry_host
+      image    = "${trimprefix(local.gitlab_registry_proxy, "${local.registry_host}/")}/gitlab-org/gitlab-runner"
+    }
 
     concurrent    = var.runner_concurrent
     checkInterval = 3
