@@ -121,7 +121,7 @@ variable "ci_images_ref" {
 
 variable "runner_concurrent" {
   type    = number
-  default = 16
+  default = 124
 }
 
 variable "runner_log_level" {
@@ -144,11 +144,12 @@ variable "job_sizes" {
     cpu_request    = string
     memory_request = string
     memory_limit   = string
+    limit          = number
   }))
   default = {
-    small  = { cpu_request = "150m", memory_request = "384Mi", memory_limit = "1Gi" }
-    medium = { cpu_request = "750m", memory_request = "2Gi", memory_limit = "6Gi" }
-    big    = { cpu_request = "2500m", memory_request = "8Gi", memory_limit = "14Gi" }
+    small  = { cpu_request = "150m", memory_request = "384Mi", memory_limit = "1Gi", limit = 48 }
+    medium = { cpu_request = "750m", memory_request = "2Gi", memory_limit = "6Gi", limit = 12 }
+    big    = { cpu_request = "2500m", memory_request = "4Gi", memory_limit = "10Gi", limit = 2 }
   }
 }
 
