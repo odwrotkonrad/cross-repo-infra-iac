@@ -55,9 +55,9 @@ validate-pre-commit-all:
   rules:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   before_script:
-    - export PROSE_ASSETS_REF=$(sed -n 's/^PROSE_ASSETS_REF *= *"\(.*\)"/\1/p' tf/terraform.tfvars)
-    - export PROSE_SPEC_REF=$(sed -n 's/^PROSE_SPEC_REF *= *"\(.*\)"/\1/p' tf/terraform.tfvars)
-    - export MISC_REF=$(sed -n 's/^MISC_REF *= *"\(.*\)"/\1/p' tf/terraform.tfvars)
+    - export PROSE_ASSETS_REF=$(sed -n 's/^PROSE_ASSETS_REF *= *"\(.*\)"/\1/p' tf/*.tfvars)
+    - export PROSE_SPEC_REF=$(sed -n 's/^PROSE_SPEC_REF *= *"\(.*\)"/\1/p' tf/*.tfvars)
+    - export MISC_REF=$(sed -n 's/^MISC_REF *= *"\(.*\)"/\1/p' tf/*.tfvars)
   script:
     - make repo-ci-precommit-all
     - git diff --exit-code HEAD
