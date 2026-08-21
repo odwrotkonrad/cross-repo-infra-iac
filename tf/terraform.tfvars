@@ -22,7 +22,7 @@ prose_spec_ref   = "v0.0.9"
 misc_ref         = "v0.0.4"
 ##[<] 🤖🤖🤖
 
-ci_images_ref = "v0.0.98"
+ci_images_ref = "v0.0.99"
 
 trees = {
   konradodwrot = {
