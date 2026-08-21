@@ -27,6 +27,7 @@ locals {
         url = "${var.gitlab_url}"
         token = "${gitlab_user_runner.ci[key].token}"
         executor = "kubernetes"
+        limit = ${var.job_sizes[v.size].limit}
         request_concurrency = 4
         pre_build_script = ${jsonencode(local.pre_build)}
         [runners.cache]
