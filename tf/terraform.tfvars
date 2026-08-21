@@ -42,6 +42,9 @@ trees = {
         description = "Shared space for user-agent cross-session collaboration: versioned markdown notes carrying context, decisions, plans, open threads across sessions and repos."
         visibility  = "private"
         topics      = ["notes", "collaboration", "agents"]
+        job_token_allowlist = [
+          "cross-repo/automation",
+        ]
       }
       resume_md_pdf = {
         name        = "resume-md-pdf"
