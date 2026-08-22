@@ -31,7 +31,7 @@ output "ssh_signing_public_key" {
   value = module.sandbox.ssh_signing_public_key
 }
 
-output "control_gitlab_token_secret" {
-  value = module.control.gitlab_token_secret
+output "automation_gitlab_token_secret" {
+  value = module.automation.gitlab_token_secret
 }
 ##[<] 🤖🤖

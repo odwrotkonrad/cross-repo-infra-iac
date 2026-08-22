@@ -48,7 +48,7 @@ variable "apt_gpg_email" {
   type = string
 }
 
-variable "control_project_path" {
+variable "automation_project_path" {
   type = string
 }
 

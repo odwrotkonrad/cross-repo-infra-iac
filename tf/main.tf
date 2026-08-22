@@ -151,7 +151,7 @@ module "auth" {
   op_vault                = var.op_vault
   ci_member               = var.gcp_ci_member
   go_modules_project_path = "${var.trees["konradodwrot"].path}/go-modules"
-  control_project_path    = "${var.trees["konradodwrot"].path}/cross-repo/automation"
+  automation_project_path = "${var.trees["konradodwrot"].path}/cross-repo/automation"
   automation_reviewer     = var.automation_reviewer
   apt_gpg_name            = var.apt_gpg_name
   apt_gpg_email           = var.apt_gpg_email

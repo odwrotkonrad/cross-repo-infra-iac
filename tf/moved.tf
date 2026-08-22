@@ -213,4 +213,20 @@ moved {
   from = module.github.github_repository.this["oci-images"]
   to   = module.github.github_repository.this["cross-repo-infra-oci-images"]
 }
+
+moved {
+  from = module.auth.module.control
+  to   = module.auth.module.automation
+}
+
+moved {
+  from = module.auth.module.automation.gitlab_group_access_token.control
+  to   = module.auth.module.automation.gitlab_group_access_token.automation
+}
+
+moved {
+  from = module.auth.module.automation.gitlab_project_variable.control_gitlab_token
+  to   = module.auth.module.automation.gitlab_project_variable.control_gitlab_token_compat
+}
+
 ##[<] 🤖🤖
