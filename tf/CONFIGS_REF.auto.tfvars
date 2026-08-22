@@ -1,3 +1,3 @@
 ##[>] 🤖🤖
-CONFIGS_REF = "v0.0.16"
+CONFIGS_REF = "v0.0.18"
 ##[<] 🤖🤖
