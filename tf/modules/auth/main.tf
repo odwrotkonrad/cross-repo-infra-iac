@@ -29,6 +29,7 @@ module "control" {
   token_expires_at     = var.token_expires_at
   gcp_project_id       = module.sandbox.project_id
   control_project_path = var.control_project_path
+  automation_reviewer  = var.automation_reviewer
 }
 
 module "host" {

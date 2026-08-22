@@ -14,4 +14,8 @@ variable "gcp_project_id" {
 variable "control_project_path" {
   type = string
 }
+
+variable "automation_reviewer" {
+  type = string
+}
 ##[<] 🤖🤖

@@ -52,6 +52,10 @@ variable "control_project_path" {
   type = string
 }
 
+variable "automation_reviewer" {
+  type = string
+}
+
 variable "user_ssh_keys" {
   type = map(object({
     key        = string
