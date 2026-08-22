@@ -22,14 +22,14 @@ module "release_signing" {
   gpg_email               = var.apt_gpg_email
 }
 
-module "control" {
-  source = "./control"
+module "automation" {
+  source = "./automation"
 
-  gitlab_group_id      = var.gitlab_group_id
-  token_expires_at     = var.token_expires_at
-  gcp_project_id       = module.sandbox.project_id
-  control_project_path = var.control_project_path
-  automation_reviewer  = var.automation_reviewer
+  gitlab_group_id         = var.gitlab_group_id
+  token_expires_at        = var.token_expires_at
+  gcp_project_id          = module.sandbox.project_id
+  automation_project_path = var.automation_project_path
+  automation_reviewer     = var.automation_reviewer
 }
 
 module "host" {
