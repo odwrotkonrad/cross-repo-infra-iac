@@ -1,3 +1,3 @@
 ##[>] 🤖🤖
-PROSE_SPEC_REF = "v0.0.20"
+PROSE_SPEC_REF = "v0.0.21"
 ##[<] 🤖🤖
