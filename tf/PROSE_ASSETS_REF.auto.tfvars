@@ -1,3 +1,3 @@
 ##[>] 🤖🤖
-PROSE_ASSETS_REF = "v0.0.55"
+PROSE_ASSETS_REF = "v0.0.56"
 ##[<] 🤖🤖
