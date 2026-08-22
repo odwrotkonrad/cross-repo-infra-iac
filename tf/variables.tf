@@ -104,6 +104,11 @@ variable "apt_gpg_name" {
   default = "konradodwrot apt"
 }
 
+variable "automation_reviewer" {
+  type    = string
+  default = "konradodwrot"
+}
+
 variable "apt_gpg_email" {
   type    = string
   default = "odwrotkonrad+apt@gmail.com"
