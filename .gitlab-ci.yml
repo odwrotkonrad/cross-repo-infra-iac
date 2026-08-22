@@ -70,7 +70,7 @@ tag-mint:
     #   set no GIT_DEPTH, and a shallow clone can walk past the tag. `sort -V` is a true version sort
     - IAC_TAG=$(git ls-remote --tags origin 'v[0-9]*' | awk -F/ '{print $NF}' | grep -v '\^{}' | sort -V | tail -1)
     - test -n "$IAC_TAG" || { echo "no v* tag on origin after tag-mint"; exit 1; }
-    - printf 'TF_VAR_iac_ref=%s\n' "$IAC_TAG" > iac-ref.env
+    - printf 'TF_VAR_IAC_REF=%s\n' "$IAC_TAG" > iac-ref.env
   artifacts:
     reports:
       dotenv: iac-ref.env
@@ -96,9 +96,12 @@ plan:
   rules:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   script:
-    #[why] branch pipelines never run tag-mint, so nothing hands them TF_VAR_iac_ref: resolve the
+    #[why] branch pipelines never run tag-mint, so nothing hands them TF_VAR_IAC_REF: resolve the
     #   current tag so the plan shows this repo's pin unchanged rather than failing on a missing var
-    - export TF_VAR_iac_ref=$(git ls-remote --tags origin 'v[0-9]*' | awk -F/ '{print $NF}' | grep -v '\^{}' | sort -V | tail -1)
+    - export TF_VAR_IAC_REF=$(git ls-remote --tags origin 'v[0-9]*' | awk -F/ '{print $NF}' | grep -v '\^{}' | sort -V | tail -1)
+    #[why] before the first tag exists the lookup yields "": plan would happily publish an empty pin,
+    #   so fall back to the default branch, which is what an unpinned consumer would resolve anyway
+    - '[ -n "$TF_VAR_IAC_REF" ] || export TF_VAR_IAC_REF=$CI_DEFAULT_BRANCH'
     - make plan
   artifacts:
     paths:
@@ -115,6 +118,12 @@ apply:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
+    #[why] tag-mint hands TF_VAR_IAC_REF over as a dotenv report, but this job runs `make plan` itself
+    #   and is the only plan on the default branch: resolve the tag here too, so a skipped or retried
+    #   tag-mint cannot leave terraform without the variable, or publish an empty pin
+    - '[ -n "${TF_VAR_IAC_REF:-}" ] || export TF_VAR_IAC_REF=$(git ls-remote --tags origin "v[0-9]*" | awk -F/ "{print \$NF}" | grep -v "\^{}" | sort -V | tail -1)'
+    - '[ -n "$TF_VAR_IAC_REF" ] || export TF_VAR_IAC_REF=$CI_DEFAULT_BRANCH'
+    - echo "IAC_REF=$TF_VAR_IAC_REF"
     - make plan
     - make apply
     - ci/changed-ci-vars.zsh automation-event.env

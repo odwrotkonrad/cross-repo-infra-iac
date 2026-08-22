@@ -189,7 +189,7 @@ module "gitlab" {
   MISC_REF         = var.MISC_REF
   CONFIGS_REF      = var.CONFIGS_REF
   AUTOMATION_REF   = var.AUTOMATION_REF
-  iac_ref          = var.iac_ref
+  IAC_REF          = var.IAC_REF
 
   CHE_BACKUP_AUTO_CREATE   = var.CHE_BACKUP_AUTO_CREATE
   CI_IMAGES_REF            = var.CI_IMAGES_REF

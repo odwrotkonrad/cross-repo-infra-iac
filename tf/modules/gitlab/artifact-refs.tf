@@ -41,11 +41,11 @@ resource "gitlab_group_variable" "automation_ref" {
 
 #[why] no tf/IAC_REF.auto.tfvars like its siblings: a checked-in pin of this repo would have to be
 #   raised by the apply that publishes it. the tag-mint job runs before plan and passes the tag it
-#   just minted as TF_VAR_iac_ref, so the value is read at plan time instead of declared
+#   just minted as TF_VAR_IAC_REF, so the value is read at plan time instead of declared
 resource "gitlab_group_variable" "iac_ref" {
   group     = var.token_group_path
   key       = "GRP_KO_VAR_IAC_REF"
-  value     = var.iac_ref
+  value     = var.IAC_REF
   masked    = false
   protected = false
 }

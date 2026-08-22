@@ -148,7 +148,7 @@ variable "AUTOMATION_REF" {
   type = string
 }
 
-variable "iac_ref" {
+variable "IAC_REF" {
   type = string
 }
 ##[<] 🤖🤖🤖

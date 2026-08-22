@@ -212,9 +212,9 @@ variable "AUTOMATION_REF" {
   type = string
 }
 
-#[why] lowercase and tfvars-less unlike its siblings: supplied as TF_VAR_iac_ref by the tag-mint job,
-#   which runs before plan, so this repo's own pin is read at plan time rather than declared
-variable "iac_ref" {
+#[why] tfvars-less unlike its siblings: supplied as TF_VAR_IAC_REF by the tag-mint job, which runs
+#   before plan, so this repo's own pin is read at plan time rather than declared
+variable "IAC_REF" {
   type = string
 }
 ##[<] 🤖🤖🤖
