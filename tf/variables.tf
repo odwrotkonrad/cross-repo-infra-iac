@@ -106,7 +106,7 @@ variable "apt_gpg_name" {
 
 variable "automation_reviewer" {
   type    = string
-  default = "konradodwrot"
+  default = "odwrotkonrad"
 }
 
 variable "apt_gpg_email" {
