@@ -6,6 +6,8 @@ plan.tfplan
 *.json
 !.repo/
 ##[>] 🤖
+#[why] shared render + tagging payload: authored in cross-repo/misc, rendered here, never tracked
+/shared/
 /AGENTS.md
 /CLAUDE.md
 /assets/data/makefile.agents.md

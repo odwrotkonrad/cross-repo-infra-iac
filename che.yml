@@ -1,9 +1,18 @@
 # yaml-language-server: $schema=https://gitlab.com/konradodwrot/go-modules/-/raw/main/che/assets/data/che.schema.json
 ##[>] 🤖🤖
+#[why] this repo's apply is what publishes these pins, so the env seed that precedes the first apply
+#   cannot read them yet: default to main here rather than at each source, keeping the pins one line
+#   each. a real value from .env or the process env still wins
+env:
+  CONFIGS_REF: ${{ env.CONFIGS_REF || main }}
+  MISC_REF: ${{ env.MISC_REF || main }}
+
 ontoRepo:
   options:
     autoDiscover: true
   include:
+    profiles:
+      - bootstrapCrossRepoCI
     renderTemplates:
       - source: "git::gitlab.com/konradodwrot/cross-repo/prose/spec@${{ env.PROSE_SPEC_REF }}"
         options:
@@ -49,7 +58,7 @@ claude-agents:
       - builtin:isVirt
   include:
     profiles:
-      - source: "git::https://gitlab.com/konradodwrot/configs//profiles/llm/claude/che.yml::llm/claude/virt"
+      - source: "git::https://gitlab.com/konradodwrot/configs@${{ env.CONFIGS_REF }}//profiles/llm/claude/che.yml::llm/claude/virt"
         ctx:
           repo: Infra
 
@@ -59,6 +68,11 @@ devEnv:
   include:
     installPackages:
       - terraform
+
+bootstrapCrossRepoCI:
+  include:
+    profiles:
+      - source: "git::https://gitlab.com/konradodwrot/cross-repo/misc@${{ env.MISC_REF }}//che.yml::bootstrapCrossRepoCITagging"
 
 envSeed:
   include:

@@ -10,6 +10,7 @@ tagging_projects = [
   "configs",
   "notes",
   "resume-md-pdf",
+  "cross-repo/infra/iac",
 ]
 
 github_owner    = "odwrotkonrad"

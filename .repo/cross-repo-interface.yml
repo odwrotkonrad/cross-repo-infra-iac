@@ -13,6 +13,8 @@ edges:
   cross-repo/misc/ci-scripts: [ci-var/misc-ref]
   che-packages/catalog: [ci-var/che-packages-ref]
   cross-repo/infra/oci-images/ci-linux: [ci-var/ci-images-ref]
+  configs/llm/claude: [ci-var/configs-ref]
+  cross-repo/automation/workspace: [ci-var/automation-ref]
 downstream:
   - {name: tf-lock, type: lockfile}
   - {name: ci-var/artifact-registry, type: ci-variable}
@@ -23,4 +25,9 @@ downstream:
   - {name: ci-var/che-packages-ref, type: ci-variable}
   - {name: ci-var/che-backup-auto-create, type: ci-variable}
   - {name: ci-var/enable-darwin-ci, type: ci-variable}
+  - {name: ci-var/configs-ref, type: ci-variable}
+  - {name: ci-var/automation-ref, type: ci-variable}
+  #[why] no edges entry feeding this one: its source is this repo's own newest tag, minted before
+  #   plan, not another repo's artifact
+  - {name: ci-var/iac-ref, type: ci-variable}
 ##[<] 🤖🤖

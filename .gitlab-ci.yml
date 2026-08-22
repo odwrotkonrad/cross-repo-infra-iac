@@ -9,6 +9,7 @@ workflow:
     - if: $CI_COMMIT_BRANCH
 
 stages:
+  - release
   - validate
   - plan
   - apply
@@ -19,6 +20,8 @@ variables:
   CI_IMAGES_REF: $GRP_KO_VAR_CI_IMAGES_REF
   PROSE_ASSETS_REF: $GRP_KO_VAR_PROSE_ASSETS_REF
   PROSE_SPEC_REF: $GRP_KO_VAR_PROSE_SPEC_REF
+  CONFIGS_REF: $GRP_KO_VAR_CONFIGS_REF
+  MISC_REF: $GRP_KO_VAR_MISC_REF
   CI_IMAGE: $ARTIFACT_REGISTRY/ci-linux:$CI_IMAGES_REF
   TF_IN_AUTOMATION: "true"
   GITLAB_TOKEN: $REPO_VAR_GITLAB_TOKEN
@@ -50,6 +53,28 @@ default:
     - test -s "$GOOGLE_APPLICATION_CREDENTIALS" || { echo "decoded SA key is empty — check GOOGLE_CREDENTIALS var"; exit 1; }
     - unset GOOGLE_CREDENTIALS
 
+#[why] before plan, not after apply: this repo publishes its own GRP_KO_VAR_IAC_REF, so the tag has
+#   to exist before terraform reads it. tag-mint.zsh exits 0 when HEAD is already tagged, so a re-run
+#   mints nothing
+tag-mint:
+  stage: release
+  needs: []
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  variables:
+    GIT_DEPTH: "0"
+    TAG_TOKEN: $REPO_VAR_TAG_TOKEN
+  script:
+    - make tag-mint
+    #[why] resolved from the remote like semver-bump.zsh does, never `git describe`: the other jobs
+    #   set no GIT_DEPTH, and a shallow clone can walk past the tag. `sort -V` is a true version sort
+    - IAC_TAG=$(git ls-remote --tags origin 'v[0-9]*' | awk -F/ '{print $NF}' | grep -v '\^{}' | sort -V | tail -1)
+    - test -n "$IAC_TAG" || { echo "no v* tag on origin after tag-mint"; exit 1; }
+    - printf 'TF_VAR_IAC_REF=%s\n' "$IAC_TAG" > iac-ref.env
+  artifacts:
+    reports:
+      dotenv: iac-ref.env
+
 validate-pre-commit-all:
   stage: validate
   rules:
@@ -71,6 +96,12 @@ plan:
   rules:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   script:
+    #[why] branch pipelines never run tag-mint, so nothing hands them TF_VAR_IAC_REF: resolve the
+    #   current tag so the plan shows this repo's pin unchanged rather than failing on a missing var
+    - export TF_VAR_IAC_REF=$(git ls-remote --tags origin 'v[0-9]*' | awk -F/ '{print $NF}' | grep -v '\^{}' | sort -V | tail -1)
+    #[why] before the first tag exists the lookup yields "": plan would happily publish an empty pin,
+    #   so fall back to the default branch, which is what an unpinned consumer would resolve anyway
+    - '[ -n "$TF_VAR_IAC_REF" ] || export TF_VAR_IAC_REF=$CI_DEFAULT_BRANCH'
     - make plan
   artifacts:
     paths:
@@ -80,12 +111,19 @@ plan:
 apply:
   extends: .tf-creds
   stage: apply
-  needs: []
+  needs:
+    - tag-mint
   interruptible: false
   resource_group: terraform
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
+    #[why] tag-mint hands TF_VAR_IAC_REF over as a dotenv report, but this job runs `make plan` itself
+    #   and is the only plan on the default branch: resolve the tag here too, so a skipped or retried
+    #   tag-mint cannot leave terraform without the variable, or publish an empty pin
+    - '[ -n "${TF_VAR_IAC_REF:-}" ] || export TF_VAR_IAC_REF=$(git ls-remote --tags origin "v[0-9]*" | awk -F/ "{print \$NF}" | grep -v "\^{}" | sort -V | tail -1)'
+    - '[ -n "$TF_VAR_IAC_REF" ] || export TF_VAR_IAC_REF=$CI_DEFAULT_BRANCH'
+    - echo "IAC_REF=$TF_VAR_IAC_REF"
     - make plan
     - make apply
     - ci/changed-ci-vars.zsh automation-event.env

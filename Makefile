@@ -5,7 +5,7 @@ SHELL := zsh
 TF ?= terraform
 
 WRAPPERS := repo-prepare-dev-env 
-COMMANDS := render-templates repo-render-env repo-prepare-deps repo-ci-prepare-hooks repo-ci-precommit-all init fmt validate lock plan apply
+COMMANDS := render-templates repo-render-env repo-prepare-deps repo-ci-prepare-hooks repo-ci-precommit-all init fmt validate lock plan apply semver-next tag-mint
 
 .PHONY: $(WRAPPERS) $(COMMANDS)
 
@@ -44,6 +44,16 @@ repo-ci-prepare-hooks:
 repo-ci-precommit-all: repo-ci-prepare-hooks
 	@lefthook run pre-commit --all-files --force
 ##[<] CI
+
+##[>] Release [genai-include]
+#[what] print the next semver tag inferred from the last tag..HEAD diff (override: `semver: major|minor|patch` commit token)
+semver-next: render-templates
+	@shared/ci/semver-bump.zsh
+
+#[what] mint and push the next semver tag (CI: authed via TAG_TOKEN)
+tag-mint: render-templates
+	@shared/ci/tag-mint.zsh
+##[<] Release
 
 ##[>] Terraform [genai-include]
 #[what] init the backend and providers

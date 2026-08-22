@@ -139,4 +139,16 @@ variable "PROSE_SPEC_REF" {
 variable "MISC_REF" {
   type = string
 }
+
+variable "CONFIGS_REF" {
+  type = string
+}
+
+variable "AUTOMATION_REF" {
+  type = string
+}
+
+variable "IAC_REF" {
+  type = string
+}
 ##[<] 🤖🤖🤖
