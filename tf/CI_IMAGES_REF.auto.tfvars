@@ -1,3 +1,3 @@
 ##[>] 🤖🤖
-CI_IMAGES_REF = "v0.0.110"
+CI_IMAGES_REF = "v0.0.112"
 ##[<] 🤖🤖
