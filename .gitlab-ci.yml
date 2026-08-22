@@ -2,7 +2,7 @@
 include:
   - project: konradodwrot/cross-repo/misc
     ref: $GRP_KO_VAR_MISC_REF
-    file: ci/templates/TriggerAutomation.gitlab-ci.yml
+    file: shared/ci/templates/TriggerAutomation.gitlab-ci.yml
 
 workflow:
   rules:
