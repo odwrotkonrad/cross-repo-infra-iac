@@ -17,6 +17,17 @@ if [[ -z ${GITLAB_TOKEN:-} && -f "$ROOT/.env" ]] {
   set +a
 }
 
+# [why] the SA key travels base64 (a GitLab variable holds one line), but the gcs backend takes raw
+#   json or a path: decode to a temp file and point the google provider at it, as CI's .tf-creds does
+if [[ -n ${GOOGLE_CREDENTIALS:-} && ${GOOGLE_CREDENTIALS:0:1} != "{" && ! -f ${GOOGLE_CREDENTIALS} ]] {
+  key=$(mktemp -t tf-sa-key)
+  trap 'rm -f $key' EXIT INT TERM
+  print -rn -- "$GOOGLE_CREDENTIALS" | base64 -d > $key
+  [[ -s $key ]] || { print -u2 "decoded SA key is empty — check GOOGLE_CREDENTIALS in .env"; exit 1 }
+  export GOOGLE_APPLICATION_CREDENTIALS=$key
+  unset GOOGLE_CREDENTIALS
+}
+
 cd "$ROOT/tf"
 
 TF=${TF:-terraform}

@@ -203,4 +203,18 @@ variable "PROSE_SPEC_REF" {
 variable "MISC_REF" {
   type = string
 }
+
+variable "CONFIGS_REF" {
+  type = string
+}
+
+variable "AUTOMATION_REF" {
+  type = string
+}
+
+#[why] lowercase and tfvars-less unlike its siblings: supplied as TF_VAR_iac_ref by the tag-mint job,
+#   which runs before plan, so this repo's own pin is read at plan time rather than declared
+variable "iac_ref" {
+  type = string
+}
 ##[<] 🤖🤖🤖
